@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "ProPrj_AT32F435mini飞控-重制版_2026-01-28")(type "KiCad")(uri "$(KIPRJMOD)/ProPrj_AT32F435mini飞控-重制版_2026-01-28.pretty")(options "")(descr ""))
+)

@@ -1,0 +1,337 @@
+(footprint "CONN-SMD_2P-P1.25_MEGASTAR_ZX-MX1.25-2PWT"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 0 0 0)
+		(layer "F.SilkS")
+		(uuid "17f82004-2934-4a45-a4e0-00955b083652")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "587e5b30-5376-49db-b61a-5a4c461e8528")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "7fc71bad-301d-4923-9458-a9bb5e2af591")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "71b39b5e-3308-4d17-a2cf-7b04397d7562")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "JLC_3DModel_Q" "59d8fe8158904fa9bf6b4dcde3621489"
+		(at 0 0 0)
+		(layer "Cmts.User")
+		(hide yes)
+		(uuid "7db74de2-31ae-4976-943f-a6ff413e28db")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "JLC_3D_Size" "7.51 5.25"
+		(at 0 0 0)
+		(layer "Cmts.User")
+		(hide yes)
+		(uuid "a313ef31-72b6-44ff-a281-9ef5851c0a40")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_line
+		(start -3.75 0.825)
+		(end -3.75 0.25)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "5b3ec794-ca08-45eb-a974-c3ab525d7cc8")
+	)
+	(fp_line
+		(start -2.175 -3.475)
+		(end -2.175 -2.814)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "585a2800-d683-45be-9182-bfaaff728a61")
+	)
+	(fp_line
+		(start -1.156 0.825)
+		(end -3.75 0.825)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "c9cb11de-1f5b-4274-8f76-37d0dee2d88e")
+	)
+	(fp_line
+		(start -0.866 -3.475)
+		(end -2.176 -3.475)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "2d2eb48a-6035-470c-a499-3db68e43e2c3")
+	)
+	(fp_line
+		(start 1.1565 0.825)
+		(end 3.75 0.825)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "6e2ae3b6-6cc1-42c3-84f0-06470553cf26")
+	)
+	(fp_line
+		(start 2.1745 -3.475)
+		(end -0.866 -3.475)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "23c26142-6950-4a07-bf55-048f281ec6be")
+	)
+	(fp_line
+		(start 2.175 -3.475)
+		(end 2.175 -2.814)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "1acfbd95-4d98-44ed-b6ad-a5f85db90fd3")
+	)
+	(fp_line
+		(start 3.75 0.825)
+		(end 3.75 0.25)
+		(stroke
+			(width 0.254)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "af31a5be-e90a-4ec9-8600-cd69454e83a2")
+	)
+	(fp_circle
+		(center 1.691 1.407)
+		(end 1.891 1.407)
+		(stroke
+			(width 0.4)
+			(type default)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "96fcdb30-a68d-4809-8c63-ae30ba7d5eac")
+	)
+	(fp_circle
+		(center 1.691 1.407)
+		(end 1.891 1.407)
+		(stroke
+			(width 0.4)
+			(type default)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+		(uuid "7fba80c3-e836-49b6-93ee-8943e7275eb6")
+	)
+	(fp_rect
+		(start -4.066 -3.7355)
+		(end 4.066 2.35)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "1ee3e52d-6c3a-4dea-8cb2-0dcc2e17ddfd")
+	)
+	(fp_line
+		(start -3.75 -3.46)
+		(end 3.75 -3.46)
+		(stroke
+			(width 0.051)
+			(type default)
+		)
+		(layer "F.Fab")
+		(uuid "c34af224-468d-4a14-9722-b3695694dcb3")
+	)
+	(fp_line
+		(start -3.75 0.84)
+		(end -3.75 -3.46)
+		(stroke
+			(width 0.051)
+			(type default)
+		)
+		(layer "F.Fab")
+		(uuid "cb5cffe6-502c-40bb-9f7c-2e5aea028bc3")
+	)
+	(fp_line
+		(start 3.75 -3.46)
+		(end 3.75 0.84)
+		(stroke
+			(width 0.051)
+			(type default)
+		)
+		(layer "F.Fab")
+		(uuid "3062a8b1-6261-4350-9c6d-f6f3c147d631")
+	)
+	(fp_line
+		(start 3.75 0.84)
+		(end -3.75 0.84)
+		(stroke
+			(width 0.051)
+			(type default)
+		)
+		(layer "F.Fab")
+		(uuid "aa9680eb-0fb7-453e-a1eb-59b0e28bc8ee")
+	)
+	(fp_poly
+		(pts
+			(xy 3.805433 1.767039) (xy 3.772961 1.734567) (xy 3.727039 1.734567) (xy 3.694567 1.767039) (xy 3.694567 1.812961)
+			(xy 3.727039 1.845433) (xy 3.772961 1.845433) (xy 3.805433 1.812961)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.Fab")
+		(uuid "9448c8fc-6f48-4daa-a83e-9eb058cb1e36")
+	)
+	(fp_poly
+		(pts
+			(xy -2.425 -0.35) (xy -3.725 -0.35) (xy -3.725 -2.15) (xy -2.425 -2.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "User.1")
+		(uuid "84b61b96-694d-4002-a147-1f1610c7e106")
+	)
+	(fp_poly
+		(pts
+			(xy -0.4745 1.79) (xy -0.7745 1.79) (xy -0.7745 0.79) (xy -0.4745 0.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "User.1")
+		(uuid "76a224e8-dd34-470e-bd6e-521758b8d337")
+	)
+	(fp_poly
+		(pts
+			(xy 0.775 1.79) (xy 0.475 1.79) (xy 0.475 0.79) (xy 0.775 0.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "User.1")
+		(uuid "33859456-f55b-46b7-8a34-711c524810ca")
+	)
+	(fp_poly
+		(pts
+			(xy 3.725 -0.35) (xy 2.425 -0.35) (xy 2.425 -2.15) (xy 3.725 -2.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "User.1")
+		(uuid "1fcf5bf2-bc0a-491a-88fb-80877be0115c")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "338d3258-0564-4076-863b-e8363b0eeac1")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.1)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at 0.625 1.25 180)
+		(size 0.7 1.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "655e194a-20b5-4f29-84ff-9d7558b325e8")
+	)
+	(pad "2" smd rect
+		(at -0.6245 1.25 180)
+		(size 0.7 1.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "5cdede7c-28af-4abc-87ce-dcb1e0517de6")
+	)
+	(pad "3" smd rect
+		(at -3.016 -1.261 180)
+		(size 1.6 2.5)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "e85d6629-f7c7-4d2f-96cb-658a3519b72a")
+	)
+	(pad "4" smd rect
+		(at 3.016 -1.248 180)
+		(size 1.6 2.5)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "34169a9c-5ea4-475e-b2d1-e915ff5c4a9a")
+	)
+	(embedded_fonts no)
+	(model "${KIPRJMOD}/EASYEDA_MODELS/CONN-SMD_2P-P1.25_MEGASTAR_ZX-MX1.25-2PWT.step"
+		(offset
+			(xyz 0 0.835 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -0 -0 -0)
+		)
+	)
+)

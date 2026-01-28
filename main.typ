@@ -72,6 +72,8 @@
   [*提示：* #body],
 )
 
+// 注释图已由 Python 生成，位于 assets/pcb-*-annotated.png
+
 // 封面
 #align(center + horizon)[
   #block(inset: 3em)[
@@ -124,9 +126,11 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 
 = 硬件概览 <hardware>
 
-#placeholder("PCB Top View 布局图", height: 13em) #todo[补充 PCB 顶层截图]
-#placeholder("PCB Bottom View 布局图", height: 13em) #todo[补充 PCB 底层截图]
-#placeholder("原理图功能分区示意图", height: 11em) #todo[补充原理图分区截图]
+#figure(image("assets/pcb-top-view.png", width: 100%), caption: [PCB Top View 布局图])
+#figure(image("assets/pcb-bottom-view.png", width: 100%), caption: [PCB Bottom View 布局图])
+#figure(image("assets/SCH_AT32F435mini飞控-重制版_2026-01-29.pdf", width: 100%), caption: [原理图概览（PDF）])
+
+#figure(image("assets/pcb-top-view2-annotated.png", width: 100%), caption: [PCB Top View（透视）接口标注图])
 // #image("assets/SCH_AT32F435mini飞控-重制版_2026-01-29.pdf")
 
 == 接口分布（大体位置）
@@ -183,7 +187,7 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 
 == 固件烧录流程
 
-#placeholder("DAP Link 连接示意图", height: 10em) #todo[补充 SWD 连接实拍/示意图]
+#figure(image("assets/pcb-bottom-view2-annotated.png", width: 100%), caption: [PCB Bottom View（调试焊盘阵列标注图）])
 
 === AT32 占位固件（Dummy）
 目的：释放 CRSF/UART7 控制权，方便 ESP8285 串口烧录。
@@ -202,8 +206,8 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
    - 无需自定义固件。
    - #todo[补充 ELRS Configurator 的具体配置参数]
 
-#placeholder("ELRS Configurator 配置截图 1", height: 9em) #todo[补充截图]
-#placeholder("ELRS Configurator 配置截图 2", height: 9em) #todo[补充截图]
+#figure(image("assets/elrs-config1.png", width: 100%), caption: [ELRS Configurator 配置截图 1])
+#figure(image("assets/elrs-config2.png", width: 100%), caption: [ELRS Configurator 配置截图 2])
 
 === AT32 INAV 固件
 1. 通过 DAP Link 连接 SWDIO / SWCLK / GND / VBAT。
@@ -376,16 +380,3 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 - *ELRS/CRSF 串口*：默认占用 UART7，避免与外设复用。
 - *供电安全*：1S LiPo 供电，避免超过负载开关额定电压。
 - *电机保护*：有刷电机接线务必确认极性，防止反向或短路。
-
-= 视觉占位说明 <figures>
-
-#todo[替换为实际图片后可删除或收缩本节]
-
-#figure(rect(width: 100%, height: 150pt), caption: [PCB Top View 布局图])
-#figure(rect(width: 100%, height: 150pt), caption: [PCB Bottom View 布局图])
-#figure(rect(width: 100%, height: 150pt), caption: [原理图模块分区示意图])
-#figure(rect(width: 100%, height: 150pt), caption: [整机接线图/飞控安装示意])
-#figure(rect(width: 100%, height: 150pt), caption: [DAP Link SWD 连接示意])
-#figure(rect(width: 100%, height: 150pt), caption: [ELRS Configurator 配置截图 1])
-#figure(rect(width: 100%, height: 150pt), caption: [ELRS Configurator 配置截图 2])
-#figure(rect(width: 100%, height: 150pt), caption: [INAV Configurator 关键设置截图])

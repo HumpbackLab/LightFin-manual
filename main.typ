@@ -1,190 +1,391 @@
+#import "@preview/dashy-todo:0.0.3": todo
+
+#set text(
+  font: ("Segoe UI", "Microsoft YaHei"),
+  size: 11pt,
+  lang: "zh",
+  region: "cn",
+)
+
+#set par(leading: 0.8em, spacing: 1.2em)
+
 #set page(
   paper: "a4",
-  margin: (x: 2cm, y: 2.5cm),
-  numbering: "1",
+  margin: (x: 2.5cm, y: 2.5cm),
+  header: context {
+    if counter(page).get().first() > 1 [
+      #set text(8pt, gray)
+      #grid(
+        columns: (1fr, 1fr),
+        [AT32F435mini INAV 飞控用户手册],
+        align(right)[版本: v1.0]
+      )
+      #v(-0.5em)
+      #line(length: 100%, stroke: 0.5pt + gray)
+    ]
+  },
+  footer: context [
+    #align(center, text(9pt, gray)[第 #counter(page).display() 页])
+  ],
 )
 
-// 设置字体，优先使用开源字体，回退到常见系统字体
-#set text(
-  font: ("Source Han Sans SC", "SimHei", "Microsoft YaHei", "PingFang SC"),
-  lang: "zh",
-  size: 11pt,
-  region: "cn"
+#set heading(numbering: "1.1 ")
+#show heading: it => {
+  v(1.2em, weak: true)
+  it
+  v(0.6em)
+}
+
+#show outline.entry: set par(leading: 1.2em)
+
+// 辅助函数：绘制占位/实物图
+#let placeholder(caption, img_path: none, height: 10em) = figure(
+  if img_path != none {
+    image(img_path, width: 100%)
+  } else {
+    rect(width: 100%, height: height, stroke: 1pt + navy, fill: luma(250), radius: 4pt)[
+      #align(center + horizon)[
+        #text(gray, size: 14pt)[#caption] \
+        #v(0.5em)
+        #text(gray, size: 9pt)[请在此替换为实物照片、PCB 截图或软件界面]
+      ]
+    ]
+  },
+  caption: caption,
 )
 
-#show heading: set text(weight: "bold")
-#show heading.where(level: 1): it => [
-  #set align(center)
-  #set text(size: 18pt)
-  #block(below: 1em)[#it]
+#let caution(body) = block(
+  fill: rgb("#fff5f5"),
+  stroke: (left: 4pt + red),
+  inset: 12pt,
+  radius: 4pt,
+  width: 100%,
+  [*注意：* #body],
+)
+
+#let tip(body) = block(
+  fill: rgb("#f0f8ff"),
+  stroke: (left: 4pt + blue),
+  inset: 12pt,
+  radius: 4pt,
+  width: 100%,
+  [*提示：* #body],
+)
+
+// 封面
+#align(center + horizon)[
+  #block(inset: 3em)[
+    #text(28pt, weight: "bold", fill: navy)[AT32F435mini] \
+    #v(0.4em)
+    #text(18pt, weight: "medium")[INAV 飞控用户手册] \
+    #v(1.2em)
+    #text(11pt, gray)[面向差速固定翼与轻量机型的 1S 一体式飞控解决方案]
+  ]
+
+  #placeholder("产品外观与接口示意图", height: 15em) #todo[补充实物外观与接口示意图]
+
+  #v(1fr)
+  #text(10pt, gray)[文档版本：v1.0 | 最后更新：2026年1月28日] \
+  #text(10pt, gray)[适用硬件：AT32F435mini 飞控（INAV 定制固件）]
 ]
-#show heading.where(level: 2): it => [
-  #set text(size: 14pt)
-  #block(above: 1.5em, below: 0.8em)[#it]
-]
 
-// 定义警告块样式
-#let caution(body) = {
-  block(
-    fill: rgb("#ffe6e6"),
-    stroke: (left: 4pt + red),
-    inset: 12pt,
-    radius: 4pt,
-    width: 100%,
-    [*注意：* #body]
-  )
-}
+#pagebreak()
 
-// 定义提示块样式
-#let tip(body) = {
-  block(
-    fill: rgb("#e6f7ff"),
-    stroke: (left: 4pt + blue),
-    inset: 12pt,
-    radius: 4pt,
-    width: 100%,
-    [*提示：* #body]
-  )
-}
+// 目录
+#outline(indent: 2em, depth: 2)
 
-// --- 文档开始 ---
+#pagebreak()
 
-= 基于 iNav 与 ELRS 的差速纸飞机新手制作指南
-#align(center)[版本: 1.0 | 适用固件: iNav Custom / 1S AIO]
+= 产品概述 <intro>
 
-== 1. 项目简介与准备工作
+== 核心定位与适用机型
+AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435* 主控与 *ELRS* 射频链路，适用于 1S 供电的轻量机型，尤其适合 *差速控制的无襟翼固定翼*。板载传感器覆盖 IMU、气压计与磁力计，满足稳定飞行与高度/航向估计的基础需求。
 
-本项目将指导你制作一架拥有“大脑”的纸飞机。不同于普通纸飞机，它可以通过遥控器控制双电机的转速差（差速）来实现转向和爬升。
-
-=== 1.1 硬件清单 (BOM)
-
-请确保你拥有以下硬件：
-
-- *飞控 (Flight Controller):* 推荐 F411 或 F405 1S AIO (一体板)。
-  - _要求：_ 需集成 1S 供电接口，至少 2 个 UART 串口。
-- *动力系统:*
-  - 电机: 0802 无刷电机 或 8520 空心杯电机 (x2)。
-  - 螺旋桨: 40mm 或 65mm 桨叶 (需区分正反桨 CW/CCW)。
-- *接收机 (Receiver):* ELRS Nano/EP1/EP2 接收机 (陶瓷天线版最适合纸飞机)。
-- *电源:* 1S LiPo 电池 (300mAh - 500mAh)，PH2.0 接口。
-- *机身:* 硬卡纸、KT板或折纸模型。
-- *辅助工具:* 电烙铁、焊锡、热熔胶、Type-C 数据线。
-
-=== 1.2 软件准备
-
-请在电脑上下载并安装：
-1. *iNav Configurator:* 用于设置飞控参数。
-2. *STM32 VCP Drivers:* 飞控驱动程序。
-3. *ImpulseRC Driver Fixer:* 如果电脑无法识别飞控，使用此工具修复。
-
----
-
-== 2. 硬件组装与焊接
-
-#caution[焊接时请务必拔掉电池！电烙铁高温，请注意安全。]
-
-=== 2.1 飞控板方向确认
-飞控板上通常印有一个 *白色箭头*。
-- *安装原则：* 箭头的指向必须与飞机的 *机头方向* 一致。
-- *固定：* 使用双面胶或热熔胶将飞控固定在机身重心附近（通常在机翼前缘后方约 1/3 处）。
-
-=== 2.2 电机接线 (差速布局)
-你需要将两个电机分别连接到飞控的电机焊盘。
-- *左电机 (Left Motor):* 焊接到飞控的 *M1* 焊盘 (信号/正/负)。
-- *右电机 (Right Motor):* 焊接到飞控的 *M2* 焊盘 (信号/正/负)。
-
-_注：如果是空心杯电机，注意正负极（红蓝线或黑白线）；如果是无刷电机，三根线任意焊，后续可通过软件调整转向。_
-
-=== 2.3 ELRS 接收机接线
-ELRS 接收机通常有 4 根线，需要连接到飞控的一个空闲串口（例如 UART1 或 UART2）。假设使用 UART1：
-
+== 核心硬件特性
 #table(
-  columns: (1fr, 1fr, 2fr),
+  columns: (1.2fr, 2fr, 2.2fr),
   inset: 8pt,
-  align: horizon,
-  [*接收机 (ELRS)*], [*飞控 (FC)*], [*说明*],
-  [5V], [5V / 4V5], [供电正极],
-  [GND], [GND], [供电地线],
-  [TX], [*RX1*], [*关键：TX 接 RX*],
-  [RX], [*TX1*], [*关键：RX 接 TX*],
+  align: horizon + center,
+
+  [*模块*], [*型号/器件*], [*说明*],
+
+  [主控 MCU], [AT32F435CGU7], [QFN48，板载 SWD 调试与多路 UART/PWM],
+  [无线链路], [ESP8285 + SX1280], [板载 ELRS 射频链路，SPI 控制射频芯片],
+  [IMU], [ICM-42688-P], [SPI1 总线，提供加速度计/陀螺仪数据],
+  [磁力计], [QMC5883P], [I2C2，总线地址 0x2C],
+  [气压计], [SPL06-001], [I2C2，总线地址 0x77],
+  [电源管理], [TPS22975 + TPS63001], [负载开关 + Buck-Boost 供电],
 )
 
----
+== 使用场景与优势
+- *差速固定翼*：双电机差速控制转向与俯仰，适合无襟翼/无舵面设计。
+- *1S 轻量平台*：板载电源方案适配 1S LiPo，结构紧凑，减少外部模块。
+- *ELRS 一体化*：无需外接接收机，降低布线与重量。
 
-== 3. 固件烧录 (Flashing)
+= 硬件概览 <hardware>
 
-我们需要将自定义的 iNav 固件写入飞控。
+#placeholder("PCB Top View 布局图", height: 13em) #todo[补充 PCB 顶层截图]
+#placeholder("PCB Bottom View 布局图", height: 13em) #todo[补充 PCB 底层截图]
+#placeholder("原理图功能分区示意图", height: 11em) #todo[补充原理图分区截图]
+// #image("assets/SCH_AT32F435mini飞控-重制版_2026-01-29.pdf")
 
-1. 打开 *iNav Configurator*。
-2. 将飞控按住 *Boot 按键* (通常是板上唯一的按钮) 不放，插入 USB 线连接电脑。
-   - 此时软件右上角应显示 `DFU` 字样。
-3. 点击左侧菜单的 *Firmware Flasher*。
-4. *加载固件：*
-   - 如果是官方支持的板子，在下拉菜单选择型号。
-   - *如果是自定义固件：* 点击右下角的 `Load Firmware [Local]`，选择你下载好的 `.hex` 文件。
-5. 开启 `Full Chip Erase` (全片擦除)。
-6. 点击 *Flash Firmware*。等待进度条走完，飞控会自动重启。
+== 接口分布（大体位置）
+- *左侧区域*：VIN 电源输入（U13）、PWM1/PWM2 电机接口（U14/U15）、电源滑动开关（SW1）。
+- *右侧区域*：PWM3/PWM4 三针接口（CN1/CN2）、UART1（U12）。
+- *中心区域*：MCU、IMU、气压计与磁力计。
+#todo[以量产丝印与实物复核接口分布]
 
----
+== 关键器件与总线连接
+- *IMU（ICM-42688-P）*：挂载于 SPI1（SPI1_SCK/MISO/MOSI/CS），提供 IMU_INT 中断。
+- *磁力计（QMC5883P）*：I2C2（IIC2_SCL/SDA），地址 *0x2C*。
+- *气压计（SPL06-001）*：I2C2（IIC2_SCL/SDA），地址 *0x77*。
+- *ELRS 无线链路*：ESP8285 通过 SPI 控制 SX1280（RADIO_SCK/MISO/MOSI/NSS、BUSY、DIO1、NRST）。
 
-== 4. 基础参数配置
+== 指示灯与按键
+- *LED 状态灯*：板载 3 颗状态灯（红/绿/蓝），其中 2 颗由 MCU 控制、1 颗由 ESP（ELRS_LED）控制，具体行为由固件定义。
+- *电源/功能按键*：板载滑动开关（MSK12CO2），用于电源控制（连接负载开关使能）。
 
-点击右上角 `Connect` 连接飞控。
+== 机械与层叠
+- *PCB 尺寸*：约 30.2 mm × 14.6 mm。#todo[确认量产外形尺寸]
+- *板厚*：1.6 mm。#todo[确认量产板厚]
+- *层叠*：4 层（F.Cu / In1.Cu / In2.Cu / B.Cu）。
+- *安装孔*：4 × M2 螺丝孔。
 
-=== 4.1 传感器校准 (Calibration)
-将飞机水平放置在桌面上，点击 *Calibration* 标签页，点击 `Calibrate Accelerometer`。确保 3D 模型是平的。
+= 快速入门 <quick-start>
 
-=== 4.2 混控设置 (Mixer) - *核心步骤*
-这是差速飞机最关键的一步。
+== 开箱检查与准备
+#caution[首次上电前请检查焊点与连接器方向，确认无短路、反接、虚焊。]
 
-1. 进入 *Mixer* 标签页。
-2. 在 Platform Configuration 中选择 *Airplane* (固定翼)。
-3. 由于我们没有舵机，依靠电机差速，我们需要自定义混控（或选择 Flying Wing 预设并修改）：
-   - *Motor 1 (左电机):* Throttle (油门) 100%, Yaw (偏航) -50%, Roll (横滚) 0%。
-   - *Motor 2 (右电机):* Throttle (油门) 100%, Yaw (偏航) +50%, Roll (横滚) 0%。
-   
-#tip[对于简单的纸飞机，通常只需要控制油门和方向（Yaw）。当你想左转时，右电机转速>左电机。你可以根据实际飞行效果调整 Yaw 的权重。]
+- 检查 PCB 外观、接口及按键是否完整。
+- 准备工具：DAP Link（或兼容 SWD 下载器）、USB-UART（3.3V）、焊台、镊子、1S LiPo。
 
-=== 4.3 端口与接收机设置
-1. 进入 *Ports* 标签页。
-   - 找到你焊接接收机的端口（如 UART1），在 *Serial Rx* 开关上打勾。
-   - 点击右下角 Save and Reboot。
-2. 进入 *Receiver* 标签页。
-   - Receiver Type 选择: `Serial (via UART)`。
-   - Serial Receiver Provider 选择: `CRSF` (ELRS 使用 CRSF 协议)。
-   - 打开遥控器，如果接线正确，你应该能看到通道条在跳动。
+== 关键接口连接
+#placeholder("整机接线总览示意图", height: 12em) #todo[补充整机接线示意图]
 
-=== 4.4 飞行模式 (Modes)
-1. 进入 *Modes* 标签页。
-2. 设置 *ARM* (解锁)：分配给一个拨杆（如 AUX1）。
-3. 设置 *ANGLE* (自稳模式)：分配给一个拨杆（如 AUX2）。
-   - *强烈建议新手全程使用 Angle 模式起飞。*
+=== 机体安装与方向
+- 飞控应安装在机体重心附近，尽量保持水平。
+- 以 PCB 丝印方向标识为准，确保机头方向与飞控坐标一致。
+- 建议使用泡棉或软胶减震固定，避免高频震动干扰 IMU。
 
----
+=== 电源输入（U13，ZX-MX1.25-2PWT）
+- *VIN*：电池正极输入。
+- *GND*：电池负极。
 
-== 5. 起飞前检查 (Pre-flight Check)
+=== 电机输出
+- *PWM1/PWM2（U14/U15，2pin）*：用于有刷电机。
+- *PWM3/PWM4（CN1/CN2，3pin）*：支持有刷电机与舵机接线。
 
-=== 5.1 电机转向检查
-1. 此时 *不要* 安装螺旋桨。
-2. 在 Outputs 标签页开启 `I understand the risks`。
-3. 单独推 M1 推杆，触摸电机外壳确认转向。
-   - 此时安装螺旋桨，确保风是 *向后吹* 的。
-   - 如果风向前吹，需要更换正反桨，或者在电机配置里反转电机方向（如果是 DSHOT 电调）。
+#caution[舵机功能当前固件尚未完成，仅保留硬件兼容性。舵机相关章节标记为“未完成”。]
 
-=== 5.2 重心 (CG) 检查
-用手指支起机翼下方约 1/3 处。
-- 飞机应该轻微低头或保持水平。
-- *严禁屁股沉（重心靠后）*，否则飞机起飞后会无法控制地抬头并失速坠毁。
+=== UART 连接
+- *UART1（U12，4pin）*：MSP/CLI 连接上位机。
+- *UART7（ELRS/CRSF）*：内部 ELRS 通信使用，默认不外接。
 
-=== 5.3 故障排查 (OSD/状态)
-在 Setup 页面，查看右侧的 *Arming Flags*。
-- 只有显示 `MSP` (连接了电脑) 是正常的。
-- 如果有 `CALIB`，请重新校准。
-- 如果有 `RX`，请检查接收机是否连接。
+== 固件烧录流程
 
-#block(
-  fill: luma(240),
-  inset: 15pt,
-  radius: 5pt,
-  [*最后一步：* 拔掉 USB，插上电池，带上遥控器，去户外草坪进行首飞！起飞时油门推至 60% 左右，手掷起飞。]
+#placeholder("DAP Link 连接示意图", height: 10em) #todo[补充 SWD 连接实拍/示意图]
+
+=== AT32 占位固件（Dummy）
+目的：释放 CRSF/UART7 控制权，方便 ESP8285 串口烧录。
+
+1. 通过 DAP Link 连接 SWDIO / SWCLK / GND / VBAT。
+2. 下载 `at32-dummy.elf` #todo[补充下载链接]。
+3. 烧录完成后：
+   - *PB4（UART7_TX / ELRS_RX）* 被配置为数字输入。
+   - *PC13 / PC14* 对应两颗 LED 交替闪烁。
+
+=== ESP8285 ELRS 固件
+1. 使用镊子短接 GPIO0 与 GND，使 ESP 进入 Bootloader。
+2. 通过 USB-UART 连接 UART5（TP18/TP7）。
+3. 复位 ESP（断电重上电或拉低 ESP_NRST）进入下载模式。
+4. 打开 ELRS Configurator，选择与截图一致的配置并刷写。
+   - 无需自定义固件。
+   - #todo[补充 ELRS Configurator 的具体配置参数]
+
+#placeholder("ELRS Configurator 配置截图 1", height: 9em) #todo[补充截图]
+#placeholder("ELRS Configurator 配置截图 2", height: 9em) #todo[补充截图]
+
+=== AT32 INAV 固件
+1. 通过 DAP Link 连接 SWDIO / SWCLK / GND / VBAT。
+2. 选择目标：`NEUTRONRCF435MINI_FW`。
+3. 两种方式：
+   - 本地编译固件并烧录；或
+   - 下载 `NEUTRONRCF435MINI_FW.elf` #todo[补充下载链接]。
+
+== 上位机连接与基础配置
+
+#placeholder("INAV Configurator 连接示意图", height: 10em) #todo[补充 INAV Configurator 界面图]
+
+1. 使用 USB-UART 连接 UART1（U12：VBAT/GND/RX/TX）。
+2. 打开 *INAV Configurator*，点击 *Connect*。
+3. 完成以下关键设置：
+   - *校准*：Accelerometer 校准。
+   - *Ports*：启用 UART1 的 MSP。
+   - *Receiver*：选择 CRSF（板载 ELRS）。
+
+=== 差速固定翼混控建议
+- 平台选择 *Airplane*。
+- 输出设置：
+  - 左电机：Throttle 100% + Yaw -50%（可按效果微调）。
+  - 右电机：Throttle 100% + Yaw +50%。
+
+#tip[差速固定翼通常只需要油门与偏航；横滚可通过差速加强或保持为 0。]
+
+== 首飞流程（差速固定翼）
+1. *起飞前检查*：IMU 校准、方向正确、螺旋桨推力向后。
+2. *解锁*：设置 ARM 模式，确保油门最低解锁。
+3. *起飞*：手掷或滑跑，油门 60% 左右。
+4. *空中调整*：根据转向响应调整差速权重。
+5. *降落*：逐步收油，保持轻微仰角滑翔落地。
+
+= 详细技术规范 <specs>
+
+== 电源树
+#table(
+  columns: (1.2fr, 2fr, 2.2fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*节点*], [*路径*], [*电压/备注*],
+
+  [VIN], [U13 电池输入], [1S LiPo 输入（负载开关额定 5.7V）],
+  [VBAT], [TPS22975 负载开关输出], [电池直通，供电机与系统],
+  [VCC], [TPS63001 Buck-Boost 输出], [系统主电源（典型 3.3V）],
+  // [可选 LDO], [RT9193-3.3 低噪声稳压], [原理图标注：Dropout 220mV@300mA #todo[确认量产是否装配]],
+  [VDDR], [SX1280 射频电源], [局部去耦供电，未外部引出],
 )
+
+- *电压采样*：ADC_VBAT 连接电池电压分压，用于 INAV 电池监测。
+
+== 传感器与总线地址
+#table(
+  columns: (1.3fr, 1.6fr, 1.2fr, 1.4fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*传感器*], [*型号*], [*总线*], [*地址/片选*],
+
+  [IMU], [ICM-42688-P], [SPI1], [SPI1_CS + IMU_INT],
+  [磁力计], [QMC5883P], [I2C2], [0x2C],
+  [气压计], [SPL06-001], [I2C2], [0x77],
+)
+
+== 接口与引脚定义
+
+=== 串口资源分配（摘要）
+#table(
+  columns: (1fr, 1.6fr, 2fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*UART*], [*用途*], [*备注*],
+  [UART1], [MSP/CLI 上位机], [通过 U12 连接],
+  [UART5], [ESP8285 串口烧录], [通过 TP7/TP18 测试点],
+  [UART7], [ELRS/CRSF 内部链路], [板载 ELRS 使用，默认不外接],
+)
+
+=== 电源输入（U13，ZX-MX1.25-2PWT）
+#table(
+  columns: (1fr, 1.2fr, 2fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*Pin*], [*Net*], [*说明*],
+  [1], [VIN], [电池正极输入],
+  [2], [GND], [电池负极],
+)
+
+=== 有刷电机输出（U14/U15，2pin）
+#table(
+  columns: (1fr, 1.2fr, 2fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*接口*], [*Pin*], [*Net / 说明*],
+  [U14], [1], [PWM1（电机控制）],
+  [U14], [2], [VBAT（电机正极）],
+  [U15], [1], [VBAT（电机正极）],
+  [U15], [2], [PWM2（电机控制）],
+)
+
+=== 三针动力/舵机接口（CN1/CN2，HC-1.25-3PWT）
+#table(
+  columns: (1fr, 1fr, 1.2fr, 2fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*接口*], [*Pin*], [*Net*], [*说明*],
+  [CN1], [1], [PWM3], [信号输出（电机/舵机）],
+  [CN1], [2], [VBAT], [电源正极],
+  [CN1], [3], [GND], [电源地],
+  [CN2], [1], [PWM4], [信号输出（电机/舵机）],
+  [CN2], [2], [VBAT], [电源正极],
+  [CN2], [3], [GND], [电源地],
+)
+
+#caution[舵机固件功能未完成，仅保留硬件兼容，请勿在当前固件中启用舵机控制。]
+
+=== UART1（MSP/CLI，U12，ZX-SH1.0-4PWT）
+#table(
+  columns: (1fr, 1.2fr, 2fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*Pin*], [*Net*], [*说明*],
+  [1], [VBAT], [供电输出（1S）],
+  [2], [GND], [地],
+  [3], [UART1_RX], [MSP/CLI 接收],
+  [4], [UART1_TX], [MSP/CLI 发送],
+)
+
+#tip[UART1 接口旁的固定焊盘与 PWM4 同网，避免焊接短路时误触。]
+#tip[UART1 提供的是 VBAT（1S）电源，不是 5V。USB-UART 必须为 3.3V 逻辑。]
+
+=== 调试/烧录测试点（TP）
+#table(
+  columns: (1fr, 1.6fr, 2fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*测试点*], [*Net*], [*用途*],
+  [TP3], [SWCLK], [AT32 SWD 时钟],
+  [TP4], [SWDIO], [AT32 SWD 数据],
+  [TP1/TP9], [GND], [SWD 参考地],
+  [TP8], [VBAT], [目标供电],
+)
+
+=== ESP 烧录/调试测试点
+#table(
+  columns: (1fr, 1.6fr, 2fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*测试点*], [*Net*], [*说明*],
+  [TP18], [UART5_TX], [ESP 串口发送],
+  [TP7], [UART5_RX], [ESP 串口接收],
+  [TP15], [GPIO0], [Bootloader 拉低进入烧录],
+  [TP1/TP9], [GND], [参考地],
+)
+
+= 调试建议与注意事项 <debug>
+
+// #caution[原理图标注：连接器方向线序待定 #todo[确认线序并补充线序示意图]。请以 PCB 丝印/实际线序为准，避免反接。]
+
+// - *USB_DP/USB_DN 未使用*：本板无 USB 通讯，请勿连接 USB 线。
+// - *BEEPER / ADC_CURR 未使用*：对应功能未引出，固件中保持关闭。
+- *ELRS/CRSF 串口*：默认占用 UART7，避免与外设复用。
+- *供电安全*：1S LiPo 供电，避免超过负载开关额定电压。
+- *电机保护*：有刷电机接线务必确认极性，防止反向或短路。
+
+= 视觉占位说明 <figures>
+
+#todo[替换为实际图片后可删除或收缩本节]
+
+#figure(rect(width: 100%, height: 150pt), caption: [PCB Top View 布局图])
+#figure(rect(width: 100%, height: 150pt), caption: [PCB Bottom View 布局图])
+#figure(rect(width: 100%, height: 150pt), caption: [原理图模块分区示意图])
+#figure(rect(width: 100%, height: 150pt), caption: [整机接线图/飞控安装示意])
+#figure(rect(width: 100%, height: 150pt), caption: [DAP Link SWD 连接示意])
+#figure(rect(width: 100%, height: 150pt), caption: [ELRS Configurator 配置截图 1])
+#figure(rect(width: 100%, height: 150pt), caption: [ELRS Configurator 配置截图 2])
+#figure(rect(width: 100%, height: 150pt), caption: [INAV Configurator 关键设置截图])

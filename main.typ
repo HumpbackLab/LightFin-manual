@@ -112,7 +112,7 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
   [*模块*], [*型号/器件*], [*说明*],
 
   [主控 MCU], [AT32F435CGU7], [QFN48，板载 SWD 调试与多路 UART/PWM],
-  [无线链路], [ESP8285 + SX1280], [板载 ELRS 射频链路，SPI 控制射频芯片],
+  [无线链路], [ESP8285 + SX1280], [板载 ELRS 射频链路，SPI 控制射频芯片；WiFi和ELRS双天线设计],
   [IMU], [LSM6DSOWTR], [SPI1 总线，提供加速度计/陀螺仪数据],
   [磁力计], [QMC5883P], [I2C2，总线地址 0x2C],
   [气压计], [SPL06-001], [I2C2，总线地址 0x77],
@@ -126,34 +126,20 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 
 = 硬件概览 <hardware>
 
-#figure(image("assets/pcb-top-view.png", width: 100%), caption: [PCB Top View 布局图])
-#figure(image("assets/pcb-bottom-view.png", width: 100%), caption: [PCB Bottom View 布局图])
+#figure(image("assets/pcb-top-view.png", width: 100%), caption: [PCB 顶层布局图])
+#figure(rotate(180deg, image("assets/pcb-bottom-view.png", width: 100%)), caption: [PCB 底层布局图])
 #figure(image("assets/SCH_AT32F435mini飞控-重制版_2026-01-29.pdf", width: 100%), caption: [原理图])
 
-// 有图片了下面这段没啥用
-// == 接口分布（大体位置）
-// - *左侧区域*：VIN 电源输入（U13）、PWM1/PWM2 电机接口（U14/U15）、电源滑动开关（SW1）。
-// - *右侧区域*：PWM3/PWM4 三针接口（CN1/CN2）、UART1（U12）。
-// - *中心区域*：MCU、IMU、气压计与磁力计。
-
-== 关键器件与总线连接
-- *IMU（LSM6DSOWTR）*：SPI1（SPI1_SCK/MISO/MOSI/CS），提供 IMU_INT 中断。
-- *磁力计（QMC5883P）*：I2C2（IIC2_SCL/SDA），地址 *0x2C*。
-- *气压计（SPL06-001）*：I2C2（IIC2_SCL/SDA），地址 *0x77*。
-- *ELRS 无线链路*：ESP8285 通过 SPI 控制 SX1280（RADIO_SCK/MISO/MOSI/NSS、BUSY、DIO1、NRST）。
-
-// 上面这段是不是重复了？考虑移除
-
 == 指示灯与按键
-- *LED 状态灯*：板载 3 颗状态灯，其中 2 颗由 MCU 控制、1 颗由 ESP（ELRS_LED）控制，具体行为由固件定义。
-- *电源/功能按键*：板载滑动开关，用于电源控制（连接负载开关使能）。
+- *LED 状态灯*：板载 3 颗状态灯，其中 2 颗由 MCU 控制、1 颗由 ESP（ELRS_LED）控制。
+- *电源/功能按键*：板载滑动开关，用于电源控制。
 
 == 机械部分
 - *PCB 尺寸*：约 30.2 mm × 14.6 mm
 - *板厚*：0.8 mm
 - *安装孔*：4 × M2 螺丝孔
 
-= 快速上手（新用户必读） <getting-started>
+= 快速上手 <getting-started>
 
 本章面向拿到成品飞控的普通用户，帮助你快速完成连接、配置和起飞。飞控已出厂预装 INAV 和 ELRS 固件，可直接按本章操作。
 
@@ -163,16 +149,28 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 1. 访问官方下载页面：
    - *GitHub Releases*: #link("https://github.com/iNavFlight/inav-configurator/releases")[https://github.com/iNavFlight/inav-configurator/releases] // 优化这个链接的样式
-   - 选择最新版本，下载对应操作系统的安装包（如 `INAV-Configurator_win64_x.x.x.exe`）。#todo[好像9.0.0发布了，是否适用？]
+   - 选择最新版本，下载对应操作系统的安装包（如 `INAV-Configurator_win64_x.x.x.exe`）。#todo[9.0.0发布了，是否适用？]
 2. 安装并运行 INAV Configurator。
 3. 首次运行时，Windows 可能提示安装驱动，按提示完成即可。
 
 == 第二步：连接飞控到电脑
 
 === 准备材料
-- USB-TTL 串口模块（CH340、CP2102、FT232 等均可，*必须支持 3.3V TTL 电平*）
-- SH1.0-4Pin 转杜邦线#image("assets/sh1.0-to-2.54.png", width: 50%) // 这里的图片放进表格？
-- 1S 锂电池（用于给飞控供电）#image("assets/battery.png", width: 50%)
+
+#table(
+  columns: 3,
+  rows: 2,
+  inset: 8pt,
+  align: horizon + center,
+  // stroke: none,
+
+  // 这里添加表头，优化布局，使得表格更紧凑
+  [#image("assets/usb-to-ttl.png", width: 80%)],
+  [#image("assets/sh1.0-to-2.54.png", width: 80%)],
+  [#image("assets/battery.png", width: 80%)],
+  [USB-TTL 串口模块\ 需支持 3.3V TTL 电平],[SH1.0-4Pin 转杜邦线], [1S 锂电池], 
+  
+)#todo[A4纸/折纸教程？]
 
 === 接线方式
 飞控正面的 *UART1 接口*（SH1.0-4Pin）用于连接上位机：
@@ -189,6 +187,8 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   [Pin 4 (TX)], [串口模块 RX], [飞控发送 → 电脑接收],
 )
 
+#figure(image("assets/annotation_03.png", width: 100%), caption: [USB-TTL 串口模块到飞控 UART1 接线示意图])
+
 #caution[TX/RX 交叉连接！飞控的 RX 接串口模块的 TX，飞控的 TX 接串口模块的 RX。]
 
 === 连接步骤
@@ -201,17 +201,30 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 #placeholder("INAV Configurator 连接成功界面", height: 10em) #todo[补充连接成功截图]
 
 
-== 第三步：配置差速纸飞机
+== 第三步：首次连接配置向导
 
-差速纸飞机使用左右两个电机的转速差实现转向，无需舵面。以下是推荐配置流程：
+首次连接飞控时，INAV Configurator 会弹出配置向导，帮助你快速完成基本设置。
 
-=== 选择机型
-1. 进入 *Setup* 页面，确认传感器状态正常（加速度计、陀螺仪、磁力计、气压计均显示绿色）。
-2. 进入 *Mixer* 页面：
-   - *Platform type*: 选择 *Airplane*
-   - *Mixer preset*: 选择 *Airplane without a tail (Wing, Delta, etc)*
+#figure(image("assets/inav-config-default-values.png", width: 80%), caption: [INAV Configurator 首次连接配置向导 - 机型选择])
 
-#figure(image("assets/inav-config-default-values.png", width: 80%), caption: [INAV Configurator 机型选择界面]) // 这个图是第一次连接时的提示，不是mixer页面，考虑单独分一节出来放
+在配置向导中：
+1. *Platform type*: 选择 *Airplane*
+2. *Mixer preset*: 选择 *Airplane without a tail (Wing, Delta, etc)*
+
+#figure(image("assets/inav-config-receiver-wizard.png", width: 80%), caption: [INAV Configurator 首次连接配置向导 - 接收机配置])
+
+接收机配置：
+1. *Serial Receiver Provider*: 选择 *CRSF*
+2. *Receiver UART*: 选择 *UART7*
+
+完成向导后点击 *Apply* 保存设置。
+
+== 第四步：配置差速纸飞机
+
+差速纸飞机使用左右两个电机的转速差实现转向，无需舵面。以下是更详细的配置说明：#todo[核实实际配置]
+
+=== 确认传感器状态
+进入 *Setup* 页面，确认传感器状态正常（加速度计、陀螺仪、磁力计、气压计均显示绿色）。
 
 === 配置电机输出
 进入 *Outputs* 页面，设置混控：
@@ -228,7 +241,9 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 #tip[Yaw 的正负号决定转向方向。如果飞机转向相反，交换两个电机的 Yaw 符号即可。]
 
-=== 配置接收机
+=== 手动配置接收机（可选）
+如果首次连接向导未正确配置接收机，可手动设置：
+
 1. 进入 *Ports* 页面：
    - 找到 *UART7*，在 *Receiver* 列选择 *Serial Rx*。
    - 点击右下角 *Save and Reboot*。
@@ -236,8 +251,6 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
    - *Receiver type*: 选择 *Serial*
    - *Serial Receiver Provider*: 选择 *CRSF*
 3. 保存并重启。
-
-#figure(image("assets/inav-config-receiver-wizard.png", width: 80%), caption: [INAV Configurator 接收机配置向导]) // 这个图是第一次连接时的提示，不是ports页面，考虑和上面的图一起放在设置初始化环节
 
 === 设置解锁开关
 1. 进入 *Modes* 页面。
@@ -251,7 +264,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 #caution[测试电机时务必卸下螺旋桨！高速旋转的螺旋桨可能造成伤害。]
 
-== 第四步：遥控器对频
+== 第五步：遥控器对频
 
 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 
@@ -281,7 +294,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 #caution[WiFi 更新仅适用于 ELRS 固件。INAV 固件需通过 SWD 有线烧录（参见后续"固件烧录流程"章节）。]
 
-== 第五步：首飞检查清单
+== 第六步：首飞检查清单
 
 #table(
   columns: (auto, 1fr),
@@ -525,8 +538,3 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 - *ELRS/CRSF 串口*：默认占用 UART7，避免与外设复用。
 - *供电安全*：1S LiPo 供电，避免超过负载开关额定电压。
 - *电机保护*：有刷电机调试时请勿安装螺旋桨，防止造成人身伤害。
-
-// 下面是待插入的图片
-#image("assets/inav-config-default-values.png") // 这里选择 Airplane without a Tail (Wing, Delta, etc)
-#image("assets/inav-config-receiver-wizard.png") // 你可以阅读图片给出描述，并放在何时的位置。
-#image("assets/debug-probe.png") // 烧录夹连接图

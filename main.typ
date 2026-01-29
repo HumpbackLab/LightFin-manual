@@ -130,11 +130,11 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 #figure(image("assets/pcb-bottom-view.png", width: 100%), caption: [PCB Bottom View 布局图])
 #figure(image("assets/SCH_AT32F435mini飞控-重制版_2026-01-29.pdf", width: 100%), caption: [原理图])
 
-== 接口分布（大体位置）
-- *左侧区域*：VIN 电源输入（U13）、PWM1/PWM2 电机接口（U14/U15）、电源滑动开关（SW1）。
-- *右侧区域*：PWM3/PWM4 三针接口（CN1/CN2）、UART1（U12）。
-- *中心区域*：MCU、IMU、气压计与磁力计。
-#todo[以量产丝印与实物复核接口分布]
+// 有图片了下面这段没啥用
+// == 接口分布（大体位置）
+// - *左侧区域*：VIN 电源输入（U13）、PWM1/PWM2 电机接口（U14/U15）、电源滑动开关（SW1）。
+// - *右侧区域*：PWM3/PWM4 三针接口（CN1/CN2）、UART1（U12）。
+// - *中心区域*：MCU、IMU、气压计与磁力计。
 
 == 关键器件与总线连接
 - *IMU（LSM6DSOWTR）*：SPI1（SPI1_SCK/MISO/MOSI/CS），提供 IMU_INT 中断。
@@ -142,16 +142,168 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 - *气压计（SPL06-001）*：I2C2（IIC2_SCL/SDA），地址 *0x77*。
 - *ELRS 无线链路*：ESP8285 通过 SPI 控制 SX1280（RADIO_SCK/MISO/MOSI/NSS、BUSY、DIO1、NRST）。
 
+// 上面这段是不是重复了？考虑移除
+
 == 指示灯与按键
-- *LED 状态灯*：板载 3 颗状态灯（红/绿/蓝），其中 2 颗由 MCU 控制、1 颗由 ESP（ELRS_LED）控制，具体行为由固件定义。
-- *电源/功能按键*：板载滑动开关（MSK12CO2），用于电源控制（连接负载开关使能）。
+- *LED 状态灯*：板载 3 颗状态灯，其中 2 颗由 MCU 控制、1 颗由 ESP（ELRS_LED）控制，具体行为由固件定义。
+- *电源/功能按键*：板载滑动开关，用于电源控制（连接负载开关使能）。
 
 == 机械部分
 - *PCB 尺寸*：约 30.2 mm × 14.6 mm
 - *板厚*：0.8 mm
 - *安装孔*：4 × M2 螺丝孔
 
-= 快速入门 <quick-start>
+= 快速上手（新用户必读） <getting-started>
+
+本章面向拿到成品飞控的普通用户，帮助你快速完成连接、配置和起飞。飞控已出厂预装 INAV 和 ELRS 固件，可直接按本章操作。
+
+== 第一步：安装 INAV Configurator
+
+INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和 Linux。
+
+1. 访问官方下载页面：
+   - *GitHub Releases*: #link("https://github.com/iNavFlight/inav-configurator/releases")[https://github.com/iNavFlight/inav-configurator/releases] // 优化这个链接的样式
+   - 选择最新版本，下载对应操作系统的安装包（如 `INAV-Configurator_win64_x.x.x.exe`）。#todo[好像9.0.0发布了，是否适用？]
+2. 安装并运行 INAV Configurator。
+3. 首次运行时，Windows 可能提示安装驱动，按提示完成即可。
+
+== 第二步：连接飞控到电脑
+
+=== 准备材料
+- USB-TTL 串口模块（CH340、CP2102、FT232 等均可，*必须支持 3.3V TTL 电平*）
+- SH1.0-4Pin 转杜邦线#image("assets/sh1.0-to-2.54.png", width: 50%) // 这里的图片放进表格？
+- 1S 锂电池（用于给飞控供电）#image("assets/battery.png", width: 50%)
+
+=== 接线方式
+飞控正面的 *UART1 接口*（SH1.0-4Pin）用于连接上位机：
+
+#table(
+  columns: (1fr, 1fr, 2fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*飞控引脚*], [*连接到*], [*说明*],
+  [Pin 1 (VBAT)], [串口模块 5V], [飞控电源],
+  [Pin 2 (GND)], [串口模块 GND], [电源地],
+  [Pin 3 (RX)], [串口模块 TX], [飞控接收 ← 电脑发送],
+  [Pin 4 (TX)], [串口模块 RX], [飞控发送 → 电脑接收],
+)
+
+#caution[TX/RX 交叉连接！飞控的 RX 接串口模块的 TX，飞控的 TX 接串口模块的 RX。]
+
+=== 连接步骤
+1. 按上表接好线，将 USB-TTL 模块插入电脑。
+// 2. 给飞控接上 1S 电池，拨动开关上电。
+3. 打开 INAV Configurator，左上角选择正确的串口（如 `COM3` 或 `/dev/ttyUSB0`）。
+4. 波特率保持默认 *115200*，点击 *Connect*。
+5. 连接成功后进入配置界面。
+
+#placeholder("INAV Configurator 连接成功界面", height: 10em) #todo[补充连接成功截图]
+
+
+== 第三步：配置差速纸飞机
+
+差速纸飞机使用左右两个电机的转速差实现转向，无需舵面。以下是推荐配置流程：
+
+=== 选择机型
+1. 进入 *Setup* 页面，确认传感器状态正常（加速度计、陀螺仪、磁力计、气压计均显示绿色）。
+2. 进入 *Mixer* 页面：
+   - *Platform type*: 选择 *Airplane*
+   - *Mixer preset*: 选择 *Airplane without a tail (Wing, Delta, etc)*
+
+#figure(image("assets/inav-config-default-values.png", width: 80%), caption: [INAV Configurator 机型选择界面]) // 这个图是第一次连接时的提示，不是mixer页面，考虑单独分一节出来放
+
+=== 配置电机输出
+进入 *Outputs* 页面，设置混控：
+
+#table(
+  columns: (1fr, 2fr, 2fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*输出通道*], [*功能*], [*混控设置*],
+  [Motor 1 (PWM1)], [左电机], [Throttle 100%, Yaw -50%],
+  [Motor 2 (PWM2)], [右电机], [Throttle 100%, Yaw +50%],
+)
+
+#tip[Yaw 的正负号决定转向方向。如果飞机转向相反，交换两个电机的 Yaw 符号即可。]
+
+=== 配置接收机
+1. 进入 *Ports* 页面：
+   - 找到 *UART7*，在 *Receiver* 列选择 *Serial Rx*。
+   - 点击右下角 *Save and Reboot*。
+2. 进入 *Receiver* 页面：
+   - *Receiver type*: 选择 *Serial*
+   - *Serial Receiver Provider*: 选择 *CRSF*
+3. 保存并重启。
+
+#figure(image("assets/inav-config-receiver-wizard.png", width: 80%), caption: [INAV Configurator 接收机配置向导]) // 这个图是第一次连接时的提示，不是ports页面，考虑和上面的图一起放在设置初始化环节
+
+=== 设置解锁开关
+1. 进入 *Modes* 页面。
+2. 找到 *ARM* 模式，点击 *Add Range*。
+3. 选择遥控器上的一个开关通道（如 AUX1），设置触发范围（如 1700-2100）。
+4. 保存设置。
+
+=== 校准与测试
+1. *加速度计校准*：进入 *Setup* 页面，将飞控水平放置，点击 *Calibrate Accelerometer*。
+2. *电机方向测试*：进入 *Outputs* 页面，*不要安装螺旋桨*，勾选 *Enable motor and servo output*，手动滑动电机滑块测试转向是否正确。
+
+#caution[测试电机时务必卸下螺旋桨！高速旋转的螺旋桨可能造成伤害。]
+
+== 第四步：遥控器对频
+
+飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
+
+=== 对频前准备
+- 确保遥控器已安装 ELRS 发射模块并刷入对应固件。
+- 遥控器和飞控的 ELRS 固件版本应匹配（建议均使用 3.x 版本）。
+
+=== 对频步骤
+1. *飞控上电*，等待 ELRS LED 开始闪烁（表示未连接状态）。
+2. *进入对频模式*（二选一）：
+   - *方法一（推荐）*：飞控上电后 60 秒内，ELRS 会自动进入对频模式（LED 快闪）。
+   - *方法二*：通过 ELRS Lua 脚本或 ELRS Web UI 手动触发对频。
+3. *遥控器发起对频*：
+   - 在遥控器上进入 ELRS Lua 脚本（OpenTX/EdgeTX：长按 SYS 键）。
+   - 选择 *Bind* 选项，等待对频完成。
+4. *对频成功*：飞控 ELRS LED 变为常亮或慢闪，INAV Configurator 的 *Receiver* 页面可看到遥控器输入。
+
+#tip[如果对频失败，检查双方固件版本是否一致，以及是否在 60 秒内完成操作。]
+
+=== 通过 WiFi 更新 ELRS 固件
+出厂固件已预装，一般无需更新。如需升级：
+
+1. 飞控上电，60 秒后 ELRS 自动开启 WiFi 热点（SSID 类似 `ExpressLRS RX`）。
+2. 电脑连接该热点，密码默认为 `expresslrs`。
+3. 浏览器访问 `http://10.0.0.1`，进入 ELRS Web UI。
+4. 上传新固件（`.bin` 文件），等待重启更新完成。
+
+#caution[WiFi 更新仅适用于 ELRS 固件。INAV 固件需通过 SWD 有线烧录（参见后续"固件烧录流程"章节）。]
+
+== 第五步：首飞检查清单
+
+#table(
+  columns: (auto, 1fr),
+  inset: 8pt,
+  align: horizon,
+
+  [☐], [加速度计已校准，飞控水平放置时 Setup 页面显示水平],
+  [☐], [遥控器已对频，Receiver 页面摇杆响应正常],
+  [☐], [电机方向正确（推力向后）],
+  [☐], [ARM 开关已设置，可正常解锁/上锁],
+  [☐], [电池电压正常，飞控供电稳定],
+  [☐], [螺旋桨安装牢固，方向正确],
+  [☐], [重心位置合适，飞机平衡],
+)
+
+完成以上检查后，找一片开阔场地，手掷起飞，享受飞行！
+
+#pagebreak()
+
+= 进阶设置与固件烧录 <quick-start>
+
+以下内容面向需要重新烧录固件或进行深度调试的用户。
 
 == 开箱检查与准备
 #caution[首次上电前请检查焊点与连接器方向，确认无短路、反接、虚焊。]
@@ -183,6 +335,10 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 - *ELRS/CRSF串口*：ELRS 通信使用，已连接AT32-UART7和ELRS-UART0，烧录ELRS时使用。
 
 == 固件烧录流程
+
+#caution[INAV 固件必须通过 SWD 有线方式烧录，需要使用 *6pin 1.25mm 烧录夹*夹在 PCB 底面的测试点焊盘上。请仔细确认线序后再连接！]
+
+#figure(image("assets/debug-probe.png", width: 80%), caption: [烧录夹连接示意图])
 
 #figure(image("assets/annotation_02.png", width: 100%, height: 10cm), caption: [PCB 底面调试焊盘示意图])
 
@@ -262,7 +418,7 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 
   [*传感器*], [*型号*], [*总线*], [*地址/片选*],
 
-  [IMU], [ICM-42688-P], [SPI1], [SPI1_CS + IMU_INT],
+  [IMU], [LSM6DSOWTR], [SPI1], [SPI1_CS + IMU_INT],
   [磁力计], [QMC5883P], [I2C2], [0x2C],
   [气压计], [SPL06-001], [I2C2], [0x77],
 )
@@ -369,3 +525,8 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 - *ELRS/CRSF 串口*：默认占用 UART7，避免与外设复用。
 - *供电安全*：1S LiPo 供电，避免超过负载开关额定电压。
 - *电机保护*：有刷电机调试时请勿安装螺旋桨，防止造成人身伤害。
+
+// 下面是待插入的图片
+#image("assets/inav-config-default-values.png") // 这里选择 Airplane without a Tail (Wing, Delta, etc)
+#image("assets/inav-config-receiver-wizard.png") // 你可以阅读图片给出描述，并放在何时的位置。
+#image("assets/debug-probe.png") // 烧录夹连接图

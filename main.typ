@@ -153,9 +153,43 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 2. 安装并运行 INAV Configurator。
 3. 首次运行时，Windows 可能提示安装驱动，按提示完成即可。
 
-== 第二步：连接飞控到电脑
+== 第二步：硬件连接
 
-=== 准备材料
+本节介绍飞控的电源、电机和串口接线方式。
+
+=== 电源接线
+飞控使用 1S 锂电池供电，通过 *MX1.25-2Pin* 接口连接：
+
+#table(
+  columns: (1fr, 1fr, 2fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*接口引脚*], [*连接到*], [*说明*],
+  [Pin 1 (VIN)], [电池正极], [1S 锂电池（3.0V-4.2V）],
+  [Pin 2 (GND)], [电池负极], [电源地],
+)
+
+=== 电机接线
+飞控提供 4 路 PWM 输出，其中 *PWM1/PWM2* 用于差速纸飞机的左右电机：
+
+#table(
+  columns: (1fr, 1.5fr, 2fr),
+  inset: 8pt,
+  align: horizon + center,
+
+  [*接口*], [*引脚定义*], [*连接说明*],
+  [U14 (PWM1)], [Pin1: PWM1, Pin2: VBAT], [左电机：信号线接 Pin1，正极接 Pin2],
+  [U15 (PWM2)], [Pin1: VBAT, Pin2: PWM2], [右电机：正极接 Pin1，信号线接 Pin2],
+)
+
+#tip[有刷电机通常只需连接 PWM 信号线和电源正极，电机负极由电机驱动电路内部连接到 GND。]
+
+#figure(image("assets/annotation_01.png", width: 100%), caption: [飞控接线总览示意图])
+
+=== 串口连接（用于配置）
+
+==== 准备材料
 
 #table(
   columns: 3,
@@ -172,7 +206,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   
 )#todo[A4纸/折纸教程？]
 
-=== 接线方式
+==== 接线方式
 飞控正面的 *UART1 接口*（SH1.0-4Pin）用于连接上位机：
 
 #table(
@@ -191,7 +225,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 #caution[TX/RX 交叉连接！飞控的 RX 接串口模块的 TX，飞控的 TX 接串口模块的 RX。]
 
-=== 连接步骤
+==== 连接步骤
 1. 按上表接好线，将 USB-TTL 模块插入电脑。
 // 2. 给飞控接上 1S 电池，拨动开关上电。
 3. 打开 INAV Configurator，左上角选择正确的串口（如 `COM3` 或 `/dev/ttyUSB0`）。
@@ -378,32 +412,6 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 2. 两种方式：
    - 本地编译固件（选择目标：`NEUTRONRCF435MINI_FW`）并烧录；或
    - 下载 `NEUTRONRCF435MINI_FW.elf` #todo[补充下载链接]。
-
-== 上位机连接与基础配置
-
-#placeholder("INAV Configurator 连接示意图", height: 10em) #todo[补充 INAV Configurator 界面图]
-
-1. 使用 USB-UART 连接 UART1（正面SH1.0-4Pin连接器VBAT/GND/RX/TX）。
-2. 打开 *INAV Configurator*，选择正确的串口设备点击 *Connect*。
-3. 完成以下关键设置：
-   - *Ports*：启用 UART1 的 MSP。
-   - *Receiver*：选择 CRSF（板载 ELRS）。
-   - *校准*：Accelerometer 校准。
-
-=== 差速固定翼混控建议
-- 平台选择 *Airplane*。
-- 输出设置：
-  - 左电机：Throttle 100% + Yaw -50%（可按效果微调）。
-  - 右电机：Throttle 100% + Yaw +50%。
-
-#tip[差速固定翼通常只需要油门与偏航；横滚可通过差速加强或保持为 0。]
-
-== 首飞流程（差速固定翼）
-1. *起飞前检查*：IMU 校准、方向正确、螺旋桨推力向后。
-2. *解锁*：设置 ARM 模式，确保油门最低解锁。
-3. *起飞*：手掷或滑跑，油门 60% 左右。
-4. *空中调整*：根据转向响应调整差速权重。
-5. *降落*：逐步收油，保持轻微仰角滑翔落地。
 
 = 详细技术规范 <specs>
 

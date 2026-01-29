@@ -113,7 +113,7 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 
   [主控 MCU], [AT32F435CGU7], [QFN48，板载 SWD 调试与多路 UART/PWM],
   [无线链路], [ESP8285 + SX1280], [板载 ELRS 射频链路，SPI 控制射频芯片],
-  [IMU], [ICM-42688-P], [SPI1 总线，提供加速度计/陀螺仪数据],
+  [IMU], [LSM6DSOWTR], [SPI1 总线，提供加速度计/陀螺仪数据],
   [磁力计], [QMC5883P], [I2C2，总线地址 0x2C],
   [气压计], [SPL06-001], [I2C2，总线地址 0x77],
   [电源管理], [TPS22975 + TPS63001], [负载开关 + Buck-Boost 供电],
@@ -128,10 +128,7 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 
 #figure(image("assets/pcb-top-view.png", width: 100%), caption: [PCB Top View 布局图])
 #figure(image("assets/pcb-bottom-view.png", width: 100%), caption: [PCB Bottom View 布局图])
-#figure(image("assets/SCH_AT32F435mini飞控-重制版_2026-01-29.pdf", width: 100%), caption: [原理图概览（PDF）])
-
-#figure(image("assets/pcb-top-view2-annotated.png", width: 100%), caption: [PCB Top View（透视）接口标注图])
-// #image("assets/SCH_AT32F435mini飞控-重制版_2026-01-29.pdf")
+#figure(image("assets/SCH_AT32F435mini飞控-重制版_2026-01-29.pdf", width: 100%), caption: [原理图])
 
 == 接口分布（大体位置）
 - *左侧区域*：VIN 电源输入（U13）、PWM1/PWM2 电机接口（U14/U15）、电源滑动开关（SW1）。
@@ -140,7 +137,7 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 #todo[以量产丝印与实物复核接口分布]
 
 == 关键器件与总线连接
-- *IMU（ICM-42688-P）*：挂载于 SPI1（SPI1_SCK/MISO/MOSI/CS），提供 IMU_INT 中断。
+- *IMU（LSM6DSOWTR）*：SPI1（SPI1_SCK/MISO/MOSI/CS），提供 IMU_INT 中断。
 - *磁力计（QMC5883P）*：I2C2（IIC2_SCL/SDA），地址 *0x2C*。
 - *气压计（SPL06-001）*：I2C2（IIC2_SCL/SDA），地址 *0x77*。
 - *ELRS 无线链路*：ESP8285 通过 SPI 控制 SX1280（RADIO_SCK/MISO/MOSI/NSS、BUSY、DIO1、NRST）。
@@ -149,11 +146,10 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 - *LED 状态灯*：板载 3 颗状态灯（红/绿/蓝），其中 2 颗由 MCU 控制、1 颗由 ESP（ELRS_LED）控制，具体行为由固件定义。
 - *电源/功能按键*：板载滑动开关（MSK12CO2），用于电源控制（连接负载开关使能）。
 
-== 机械与层叠
-- *PCB 尺寸*：约 30.2 mm × 14.6 mm。#todo[确认量产外形尺寸]
-- *板厚*：1.6 mm。#todo[确认量产板厚]
-- *层叠*：4 层（F.Cu / In1.Cu / In2.Cu / B.Cu）。
-- *安装孔*：4 × M2 螺丝孔。
+== 机械部分
+- *PCB 尺寸*：约 30.2 mm × 14.6 mm
+- *板厚*：0.8 mm
+- *安装孔*：4 × M2 螺丝孔
 
 = 快速入门 <quick-start>
 
@@ -161,71 +157,69 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 #caution[首次上电前请检查焊点与连接器方向，确认无短路、反接、虚焊。]
 
 - 检查 PCB 外观、接口及按键是否完整。
-- 准备工具：DAP Link（或兼容 SWD 下载器）、USB-UART（3.3V）、焊台、镊子、1S LiPo。
+- 准备工具：DAP Link（或兼容 SWD 下载器）、USB-UART（3.3V）、烧录夹、1S 锂电池。
 
 == 关键接口连接
-#placeholder("整机接线总览示意图", height: 12em) #todo[补充整机接线示意图]
+#figure(image("assets/annotation_01.png", width: 100%), caption: [PCB正面接线示意图])
+// #placeholder("整机接线总览示意图", height: 12em) #todo[补充整机接线示意图]
 
 === 机体安装与方向
 - 飞控应安装在机体重心附近，尽量保持水平。
 - 以 PCB 丝印方向标识为准，确保机头方向与飞控坐标一致。
 - 建议使用泡棉或软胶减震固定，避免高频震动干扰 IMU。
 
-=== 电源输入（U13，ZX-MX1.25-2PWT）
+=== 电源输入（MX1.25-2Pin）
 - *VIN*：电池正极输入。
 - *GND*：电池负极。
 
 === 电机输出
-- *PWM1/PWM2（U14/U15，2pin）*：用于有刷电机。
-- *PWM3/PWM4（CN1/CN2，3pin）*：支持有刷电机与舵机接线。
+- *PWM1/PWM2（2Pin）*：用于有刷电机。
+- *PWM3/PWM4（3Pin）*：支持有刷电机与舵机接线。
 
-#caution[舵机功能当前固件尚未完成，仅保留硬件兼容性。舵机相关章节标记为“未完成”。]
+#caution[舵机功能当前固件尚未完成，仅保留硬件兼容性。]
 
 === UART 连接
-- *UART1（U12，4pin）*：MSP/CLI 连接上位机。
-- *UART7（ELRS/CRSF）*：内部 ELRS 通信使用，默认不外接。
+- *UART1*：正面SH1.0-4Pin连接器，连接上位机。
+- *ELRS/CRSF串口*：ELRS 通信使用，已连接AT32-UART7和ELRS-UART0，烧录ELRS时使用。
 
 == 固件烧录流程
 
-#figure(image("assets/pcb-bottom-view2-annotated.png", width: 100%), caption: [PCB Bottom View（调试焊盘阵列标注图）])
+#figure(image("assets/annotation_02.png", width: 100%, height: 10cm), caption: [PCB 底面调试焊盘示意图])
 
-=== AT32 占位固件（Dummy）
+=== AT32 占位固件
 目的：释放 CRSF/UART7 控制权，方便 ESP8285 串口烧录。
 
-1. 通过 DAP Link 连接 SWDIO / SWCLK / GND / VBAT。
+1. 通过 DAP Link 连接 SWDIO / SWCLK / GND / VBAT(5V)。
 2. 下载 `at32-dummy.elf` #todo[补充下载链接]。
 3. 烧录完成后：
-   - *PB4（UART7_TX / ELRS_RX）* 被配置为数字输入。
-   - *PC13 / PC14* 对应两颗 LED 交替闪烁。
+   - UART7 被配置为数字输入。
+   - 两颗 LED 交替闪烁。
 
 === ESP8285 ELRS 固件
 1. 使用镊子短接 GPIO0 与 GND，使 ESP 进入 Bootloader。
 2. 通过 USB-UART 连接 UART5（TP18/TP7）。
 3. 复位 ESP（断电重上电或拉低 ESP_NRST）进入下载模式。
-4. 打开 ELRS Configurator，选择与截图一致的配置并刷写。
-   - 无需自定义固件。
-   - #todo[补充 ELRS Configurator 的具体配置参数]
+4. 打开 ELRS Configurator，选择与下图一致的配置并选择串口刷写。
 
-#figure(image("assets/elrs-config1.png", width: 100%), caption: [ELRS Configurator 配置截图 1])
-#figure(image("assets/elrs-config2.png", width: 100%), caption: [ELRS Configurator 配置截图 2])
+#figure(image("assets/elrs-config1.png", width: 80%), caption: [ELRS Configurator 配置截图 1])
+#figure(image("assets/elrs-config2.png", width: 80%), caption: [ELRS Configurator 配置截图 2])
 
 === AT32 INAV 固件
 1. 通过 DAP Link 连接 SWDIO / SWCLK / GND / VBAT。
-2. 选择目标：`NEUTRONRCF435MINI_FW`。
-3. 两种方式：
-   - 本地编译固件并烧录；或
+2. 两种方式：
+   - 本地编译固件（选择目标：`NEUTRONRCF435MINI_FW`）并烧录；或
    - 下载 `NEUTRONRCF435MINI_FW.elf` #todo[补充下载链接]。
 
 == 上位机连接与基础配置
 
 #placeholder("INAV Configurator 连接示意图", height: 10em) #todo[补充 INAV Configurator 界面图]
 
-1. 使用 USB-UART 连接 UART1（U12：VBAT/GND/RX/TX）。
-2. 打开 *INAV Configurator*，点击 *Connect*。
+1. 使用 USB-UART 连接 UART1（正面SH1.0-4Pin连接器VBAT/GND/RX/TX）。
+2. 打开 *INAV Configurator*，选择正确的串口设备点击 *Connect*。
 3. 完成以下关键设置：
-   - *校准*：Accelerometer 校准。
    - *Ports*：启用 UART1 的 MSP。
    - *Receiver*：选择 CRSF（板载 ELRS）。
+   - *校准*：Accelerometer 校准。
 
 === 差速固定翼混控建议
 - 平台选择 *Airplane*。
@@ -252,14 +246,13 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 
   [*节点*], [*路径*], [*电压/备注*],
 
-  [VIN], [U13 电池输入], [1S LiPo 输入（负载开关额定 5.7V）],
-  [VBAT], [TPS22975 负载开关输出], [电池直通，供电机与系统],
-  [VCC], [TPS63001 Buck-Boost 输出], [系统主电源（典型 3.3V）],
-  // [可选 LDO], [RT9193-3.3 低噪声稳压], [原理图标注：Dropout 220mV@300mA #todo[确认量产是否装配]],
+  [VIN], [电池输入], [1S 锂电池，额定最大值 5.7V],
+  [VBAT], [TPS22975 负载开关输出], [开关控制，供电机与系统],
+  [VCC], [TPS63001 Buck-Boost 输出], [系统主电源3.3V],
   [VDDR], [SX1280 射频电源], [局部去耦供电，未外部引出],
 )
 
-- *电压采样*：ADC_VBAT 连接电池电压分压，用于 INAV 电池监测。
+- *电压采样*：ADC_VBAT 连接电池电压分压，用于 INAV 电池监测。#todo[分压系数设置？]
 
 == 传感器与总线地址
 #table(
@@ -342,8 +335,8 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
   [4], [UART1_TX], [MSP/CLI 发送],
 )
 
-#tip[UART1 接口旁的固定焊盘与 PWM4 同网，避免焊接短路时误触。]
-#tip[UART1 提供的是 VBAT（1S）电源，不是 5V。USB-UART 必须为 3.3V 逻辑。]
+#tip[UART1 接口旁的固定焊盘为 PWM4 网络，避免短路/误触。]
+#tip[UART1 引出的是 VBAT（1S）电源，需连接串口 5V 电源。但TX/RX必须为 3.3V TTL逻辑电平。]
 
 === 调试/烧录测试点（TP）
 #table(
@@ -373,10 +366,6 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 
 = 调试建议与注意事项 <debug>
 
-// #caution[原理图标注：连接器方向线序待定 #todo[确认线序并补充线序示意图]。请以 PCB 丝印/实际线序为准，避免反接。]
-
-// - *USB_DP/USB_DN 未使用*：本板无 USB 通讯，请勿连接 USB 线。
-// - *BEEPER / ADC_CURR 未使用*：对应功能未引出，固件中保持关闭。
 - *ELRS/CRSF 串口*：默认占用 UART7，避免与外设复用。
 - *供电安全*：1S LiPo 供电，避免超过负载开关额定电压。
-- *电机保护*：有刷电机接线务必确认极性，防止反向或短路。
+- *电机保护*：有刷电机调试时请勿安装螺旋桨，防止造成人身伤害。

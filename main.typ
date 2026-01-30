@@ -252,7 +252,6 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 #caution[首次连接配置向导阶段，请勿连接电机！INAV 在选择 Airplane 模式后，默认会激活电调输出，可能导致连接的电机意外转动，造成电脑 USB 端口保护性断开，或造成人身伤害。请在配置完成后再连接电机。]
 
 
-// todo: 这段说明文字不对，请阅读图片后修改。
 成功连接 INAV Configurator 后的界面如右图所示。请确保左上角显示已连接的串口端口名称，这表明飞控已与上位机正常通信。
 
 #figure(image("assets/inav-config-connect.png", width: 90%), caption: [连接成功界面])
@@ -284,23 +283,26 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 接下来进行传感器校准是确保飞控正常工作和飞行安全的关键步骤。校准包括加速度计和磁力计，它们用于提供飞控的姿态和方向信息。请进入 INAV Configurator 的左侧导航栏，点击 *Calibration* 页面。
 
-下图是飞控未校准传感器的初始状态。您需要按照屏幕提示，逐步完成加速度计（Accelerometer）和磁力计（Magnetometer，即指南针）的校准，以确保飞控能准确感知姿态和方向。
+首先进行加速度计校准。在 Calibration 页面，点击 "Calibrate Accelerometer" 按钮。
 
 // todo: 这里描述不够详细。请按照加速度计和磁力计分两步。校准加速度计时，需要将飞控 pcb 按照正面朝上、反面朝上、各个侧面朝上的顺序依次静置和点击 Calibrate Accelerometer 按钮，点亮每个灰色的step，直到完全点亮。
 
 #figure(image("assets/inav-calibration-start.png", width: 90%), caption: [校准开始界面])
 
-加速度计校准（Accelerometer Calibration）成功后，界面会提示您接下来进行磁力计校准（Calibrate Magnetometer）。这是非常重要的一步，磁力计能帮助飞机准确判断航向。
+此时，您需要将飞控板按照不同的方向（正面朝上、反面朝上、左侧朝上、右侧朝上、机头朝上、机尾朝上，共六个方向）依次静置在水平表面上。每静置一个方向后，点击一次 Calibrate Accelerometer 按钮，直到界面中的所有灰色方块都被点亮。
 
 #figure(image("assets/inav-calibration-accel-done.png", width: 90%), caption: [加速度计校准完成])
 
-// todo: 磁力计校准也需要一段操作说明，请【阅读图片】，图中是写了操作说明的，请将其翻译为中文。
+如上图，加速度计校准成功后，接下来进行磁力计校准（Compass Calibration）。点击 "Calibrate Compass" 按钮，在 30 秒的时间内：将飞控握在空中，缓慢、平稳地旋转飞控，使其每一个面（包括前、后、左、右、顶部和底部）都依次朝向地面。此过程旨在让飞控的磁力计学习所有方向的磁场数据。
 
-磁力计校准完成后，所有校准任务即告一段落。此时，请务必点击右下角的 "Save and Reboot" 按钮，保存您的设置并让飞控重新启动，使新的校准数据生效。
+#tip[请务必确保在校准过程中，飞控附近没有磁铁或任何电磁干扰源，以免影响校准的准确性。]
 
 #figure(image("assets/inav-calibration-compass-done.png", width: 90%), caption: [磁力计校准完成])
 
-#par[飞控重启后，返回 Status 页面。此时您会看到 "Pre-arming checks" 列表已经全部变为绿色。这表示所有飞行前的安全检查均已通过，飞机已准备好解锁（ARM）并进行飞行。]
+磁力计校准完成后，所有校准任务即告一段落。此时，请务必点击右下角的 "Save and Reboot" 按钮，保存您的设置并让飞控重新启动，使新的校准数据生效。
+
+飞控重启后，返回 Status 页面。此时您会看到 "Pre-arming checks" 列表已经全部变为绿色。这表示所有飞行前的安全检查均已通过，飞机已准备好解锁（ARM）并进行飞行。
+
 #figure(image("assets/inav-prearm-green.png", width: 90%), caption: [解锁检查通过])
 
 == 第四步：配置差速纸飞机

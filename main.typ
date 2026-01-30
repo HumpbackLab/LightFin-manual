@@ -690,3 +690,15 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   [对频], [Binding，遥控器发射机与接收机建立配对关系的过程。],
   [解锁/ARM], [使飞控进入可飞行状态，电机响应油门输入。],
 )
+
+
+== 待补充的图片
+
+#image("assets/inav-config-connect.png") // 通过串口连接飞控
+#image("assets/inav-config-status-page.png") // 初始配置完成后的status界面，请用户检查传感器（gyro，accel，mag，baro）是否正常（显蓝色而非红色）；并为右侧的 pre-arming checks编写一段说明
+#image("assets/image.png") // calibration 页面，未校准状态
+#image("assets/image-1.png") // calibration 页面，加速度计校准完成状态，接下来校准compass，请阅读图片写一段中文说明
+#image("assets/image-2.png") // compass校准完成，接下来点击save and reboot
+#image("assets/image-3.png") // 重启后，右侧pre-arming checks全绿
+
+// 请为上面所有image*.png重命名为可读的名字

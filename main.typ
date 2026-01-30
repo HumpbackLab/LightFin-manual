@@ -1,7 +1,8 @@
 #import "@preview/dashy-todo:0.0.3": todo
 
 #set text(
-  font: ("Noto Sans CJK SC", "Microsoft YaHei"),
+  // 请忽略字体问题，无需在意
+  font: ("Noto Sans", "Source Han Sans SC", "Microsoft YaHei"),
   size: 11pt,
   lang: "zh",
   region: "cn",
@@ -163,7 +164,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 1. 访问官方下载页面：
    - *GitHub Releases*: #link("https://github.com/iNavFlight/inav-configurator/releases")[https://github.com/iNavFlight/inav-configurator/releases] // 优化这个链接的样式
-   - 选择最新版本，下载对应操作系统的安装包（如 `INAV-Configurator_win64_x.x.x.exe`）。#todo[9.0.0发布了，是否适用？]
+   - 选择最新版本，下载对应操作系统的安装包。如 `INAV-Configurator_win64_x.x.x.exe`）#todo[9.0.0发布了，是否适用？]
 2. 安装并运行 INAV Configurator。
 3. 首次运行时，Windows 可能提示安装驱动，按提示完成即可。
 
@@ -250,7 +251,11 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 #caution[首次连接配置向导阶段，请勿连接电机！INAV 在选择 Airplane 模式后，默认会激活电调输出，可能导致连接的电机意外转动，造成电脑 USB 端口保护性断开，或造成人身伤害。请在配置完成后再连接电机。]
 
-#placeholder("INAV Configurator 连接成功界面", height: 10em) #todo[补充连接成功截图]
+
+// todo: 这段说明文字不对，请阅读图片后修改。
+成功连接 INAV Configurator 后的界面如右图所示。请确保左上角显示已连接的串口端口名称，这表明飞控已与上位机正常通信。
+
+#figure(image("assets/inav-config-connect.png", width: 90%), caption: [连接成功界面])
 
 
 == 第三步：首次连接配置向导
@@ -270,6 +275,33 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 2. *Receiver UART*: 选择 *UART7*
 
 完成向导后点击 *Apply* 保存设置。
+
+首次配置向导完成后，Status 页面将显示飞控的整体状态。如图所示，请确保左侧的传感器状态（陀螺仪、加速度计、磁力计、气压计）均为蓝色，这表示硬件连接和识别正常。右侧的 "Pre-arming checks" 列表在此时可能会显示一些红色的叉（例如传感器未校准、飞行模式未设置等），这是正常的。这些红色的检查项将在后续的校准和设置步骤中逐一解决，请暂时忽略。
+
+#figure(image("assets/inav-config-status-page.png", width: 90%), caption: [Status 页面])
+
+=== 传感器校准
+
+接下来进行传感器校准是确保飞控正常工作和飞行安全的关键步骤。校准包括加速度计和磁力计，它们用于提供飞控的姿态和方向信息。请进入 INAV Configurator 的左侧导航栏，点击 *Calibration* 页面。
+
+下图是飞控未校准传感器的初始状态。您需要按照屏幕提示，逐步完成加速度计（Accelerometer）和磁力计（Magnetometer，即指南针）的校准，以确保飞控能准确感知姿态和方向。
+
+// todo: 这里描述不够详细。请按照加速度计和磁力计分两步。校准加速度计时，需要将飞控 pcb 按照正面朝上、反面朝上、各个侧面朝上的顺序依次静置和点击 Calibrate Accelerometer 按钮，点亮每个灰色的step，直到完全点亮。
+
+#figure(image("assets/inav-calibration-start.png", width: 90%), caption: [校准开始界面])
+
+加速度计校准（Accelerometer Calibration）成功后，界面会提示您接下来进行磁力计校准（Calibrate Magnetometer）。这是非常重要的一步，磁力计能帮助飞机准确判断航向。
+
+#figure(image("assets/inav-calibration-accel-done.png", width: 90%), caption: [加速度计校准完成])
+
+// todo: 磁力计校准也需要一段操作说明，请【阅读图片】，图中是写了操作说明的，请将其翻译为中文。
+
+磁力计校准完成后，所有校准任务即告一段落。此时，请务必点击右下角的 "Save and Reboot" 按钮，保存您的设置并让飞控重新启动，使新的校准数据生效。
+
+#figure(image("assets/inav-calibration-compass-done.png", width: 90%), caption: [磁力计校准完成])
+
+#par[飞控重启后，返回 Status 页面。此时您会看到 "Pre-arming checks" 列表已经全部变为绿色。这表示所有飞行前的安全检查均已通过，飞机已准备好解锁（ARM）并进行飞行。]
+#figure(image("assets/inav-prearm-green.png", width: 90%), caption: [解锁检查通过])
 
 == 第四步：配置差速纸飞机
 
@@ -317,11 +349,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 3. 选择遥控器上的一个开关通道（如 AUX1），设置触发范围（如 1700-2100）。
 4. 保存设置。
 
-=== 校准与测试
-1. *加速度计校准*：进入 *Setup* 页面，将飞控水平放置，点击 *Calibrate Accelerometer*。
-2. *电机方向测试*：进入 *Outputs* 页面，*不要安装螺旋桨*，勾选 *Enable motor and servo output*，手动滑动电机滑块测试转向是否正确。
 
-#caution[测试电机时务必卸下螺旋桨！高速旋转的螺旋桨可能造成伤害。]
 
 == 第五步：遥控器对频
 
@@ -690,15 +718,3 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   [对频], [Binding，遥控器发射机与接收机建立配对关系的过程。],
   [解锁/ARM], [使飞控进入可飞行状态，电机响应油门输入。],
 )
-
-
-== 待补充的图片
-
-#image("assets/inav-config-connect.png") // 通过串口连接飞控
-#image("assets/inav-config-status-page.png") // 初始配置完成后的status界面，请用户检查传感器（gyro，accel，mag，baro）是否正常（显蓝色而非红色）；并为右侧的 pre-arming checks编写一段说明
-#image("assets/image.png") // calibration 页面，未校准状态
-#image("assets/image-1.png") // calibration 页面，加速度计校准完成状态，接下来校准compass，请阅读图片写一段中文说明
-#image("assets/image-2.png") // compass校准完成，接下来点击save and reboot
-#image("assets/image-3.png") // 重启后，右侧pre-arming checks全绿
-
-// 请为上面所有image*.png重命名为可读的名字

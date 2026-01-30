@@ -1,7 +1,7 @@
 #import "@preview/dashy-todo:0.0.3": todo
 
 #set text(
-  font: ("Segoe UI", "Microsoft YaHei"),
+  font: ("Noto Sans CJK SC", "Microsoft YaHei"),
   size: 11pt,
   lang: "zh",
   region: "cn",

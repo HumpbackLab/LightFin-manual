@@ -1,7 +1,7 @@
 #import "@preview/dashy-todo:0.0.3": todo
 
 #set text(
-  font: ("Segoe UI", "Microsoft YaHei"),
+  font: ("Noto Sans CJK SC", "Microsoft YaHei"),
   size: 11pt,
   lang: "zh",
   region: "cn",
@@ -128,7 +128,6 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 
 #figure(image("assets/pcb-top-view.png", width: 100%), caption: [PCB 顶层布局图])
 #figure(rotate(180deg, image("assets/pcb-bottom-view.png", width: 100%)), caption: [PCB 底层布局图])
-#figure(image("assets/SCH_AT32F435mini飞控-重制版_2026-01-29.pdf", width: 100%), caption: [原理图])
 
 == 指示灯与按键
 - *LED 状态灯*：板载 3 颗状态灯，其中 2 颗由 MCU 控制、1 颗由 ESP（ELRS_LED）控制。
@@ -209,7 +208,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 ==== 准备材料
 
 #table(
-  columns: 3,
+  columns: 2,
   rows: 2,
   inset: 8pt,
   align: horizon + center,
@@ -218,8 +217,8 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   // 这里添加表头，优化布局，使得表格更紧凑
   [#image("assets/usb-to-ttl.png", width: 80%)],
   [#image("assets/sh1.0-to-2.54.png", width: 80%)],
-  [#image("assets/battery.png", width: 80%)],
-  [USB-TTL 串口模块\ 需支持 3.3V TTL 电平],[SH1.0-4Pin 转杜邦线], [1S 锂电池], 
+  // [#image("assets/battery.png", width: 80%)],
+  [USB-TTL 串口模块\ 需支持 3.3V TTL 电平],[SH1.0-4Pin 转杜邦线],// [1S 锂电池], 
   
 )#todo[A4纸/折纸教程？]
 
@@ -249,6 +248,8 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 4. 波特率保持默认 *115200*，点击 *Connect*。
 5. 连接成功后进入配置界面。
 
+#caution[首次连接配置向导阶段，请勿连接电机！INAV 在选择 Airplane 模式后，默认会激活电调输出，可能导致连接的电机意外转动，造成电脑 USB 端口保护性断开，或造成人身伤害。请在配置完成后再连接电机。]
+
 #placeholder("INAV Configurator 连接成功界面", height: 10em) #todo[补充连接成功截图]
 
 
@@ -277,8 +278,8 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 === 确认传感器状态
 进入 *Setup* 页面，确认传感器状态正常（加速度计、陀螺仪、磁力计、气压计均显示绿色）。
 
-=== 配置电机输出
-进入 *Outputs* 页面，设置混控：
+=== 配置 Mixer 混控（差速）
+进入 *Mixer* 页面，按差速纸飞机的两路电机混控设置：
 
 #table(
   columns: (1fr, 2fr, 2fr),
@@ -286,11 +287,18 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   align: horizon + center,
 
   [*输出通道*], [*功能*], [*混控设置*],
-  [Motor 1 (PWM1)], [左电机], [Throttle 100%, Yaw -50%],
-  [Motor 2 (PWM2)], [右电机], [Throttle 100%, Yaw +50%],
+  [Motor 1], [左电机], [Throttle 100%, Yaw -50%],
+  [Motor 2], [右电机], [Throttle 100%, Yaw +50%],
 )
 
 #tip[Yaw 的正负号决定转向方向。如果飞机转向相反，交换两个电机的 Yaw 符号即可。]
+
+=== 设置输出协议与通道（Brushed）
+进入 *Outputs* 页面：
+- *Motor protocol* 选择 *Brushed*（有刷电机）。
+- 将 *Motor 1* 映射到 *PWM1*，*Motor 2* 映射到 *PWM2*（出厂焊盘顺序）。
+- 仅在未安装螺旋桨时勾选 *Enable motor and servo output* 以测试电机。
+- 若电机正反转颠倒，可直接交换电机两根线。
 
 === 手动配置接收机（可选）
 如果首次连接向导未正确配置接收机，可手动设置：
@@ -361,7 +369,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 #tip[密码对频的优势：无需在特定时间窗口内操作，只要密码一致，每次上电都会自动连接。]
 
-#tip[如果对频失败，检查：1) 双方对频密码是否完全一致（区分大小写）；2) ELRS 固件版本是否匹配（建议均为 3.x）。]
+#tip[如果对频失败，依次检查：1) 遥控器与飞控的 *Binding Phrase* 是否完全一致（区分大小写）；2) 遥控器与飞控的 ELRS 固件主版本是否一致（建议均为 3.x）；3) INAV *Ports* 页 UART7 是否勾选 Serial Rx，*Receiver* 页是否选择 Serial/CRSF；4) 更换 USB 线或端口后重连再试。]
 
 === 通过 WiFi 更新 ELRS 固件
 出厂固件已预装，一般无需更新。如需升级：

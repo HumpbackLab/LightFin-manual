@@ -98,16 +98,16 @@
     let height-final-untrimmed = height-final-trimmed / float(height-rel-trimmed)
 
     box(
-      clip: true, 
-      inset: (
-          top: -(top * height-final-untrimmed), 
-          bottom: -(bottom * height-final-untrimmed),
-          left: -(left * width-final-untrimmed),
-          right: -(right * width-final-untrimmed)
-        ), 
+        clip: true,
+        inset: (
+            top: -(top * height-final-untrimmed),
+            bottom: -(bottom * height-final-untrimmed),
+            left: -(left * width-final-untrimmed),
+            right: -(right * width-final-untrimmed)
+          ),
       // TODO: Handle explicit sizing according to a parameter (e.g. don't scale over DPI limits)
-      image(path, width: width-final-untrimmed, height: height-final-untrimmed, alt: alt)
-    )
+        image(path, width: width-final-untrimmed, height: height-final-untrimmed, alt: alt)
+      )
   })
 }
 
@@ -335,20 +335,34 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 === 预配置电机模式
 
-在连接物理电机到飞控之前，需要修改INAV的默认电机设置，避免在调试过程中，电机意外激活而转动，造成潜在的危险或设备损坏。
+在连接物理电机到飞控之前，需要修改INAV的默认电机设置，避免默认配置下电机意外转动，造成潜在的危险或设备损坏。
 
 #caution[
   在完成本节配置前，请勿连接电机。
 ]
 
-// todo: 请完善本节图文
+按以下步骤将默认输出模式改为有刷电机（BRUSHED）：
 
-#image("assets/image-3.png") // 然后来到configurator的Outputs页面
+1. 连接飞控并进入 INAV Configurator。
+2. 左侧导航栏进入 *Outputs* 页面（如下图）。
+
+#figure(
+  image("assets/inav-outputs-page.png", width: 90%),
+  caption: [Outputs 页面]
+)
 #tip[
   纸飞机飞控无电流检测电路，在Outputs页面显示的当前电流值无效，可放心忽略。连接电池情况下，Voltage 部分应显示真实电池电压。
 ]
-#image("assets/image-5.png") // 配置：打开 Enable motor and servo output的开关；将 ESC protocol 设为BRUSHED
-// 点击右下角的 Save and Reboot，飞控会自动重启。接下来可安全地进行电机物理连接。
+
+3. 打开 *Enable motor and servo output* 开关。
+4. 将 *ESC protocol* 设置为 *BRUSHED*（有刷电机）。
+
+#figure(
+  image("assets/inav-outputs-enable-brushed.png", width: 90%),
+  caption: [启用输出并设置 BRUSHED]
+)
+
+5. 点击右下角 *Save and Reboot* 保存并重启。重启完成后重新连接，确认设置已生效。
 
 == 第四步：配置差速纸飞机
 
@@ -400,28 +414,46 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   [Pin 4 (TX)], [串口模块 RX], [飞控发送 → 电脑接收],
 )
 
-// todo: 新增加的电机/电池/usb串口连接示意图
+下图给出了电机、电池与 USB-TTL 串口的同时连接方式，供接线核对：
 #figure(image("assets/annotation_04.png", width: 90%, height: 8.2cm), caption: [电机、电池及USB串口模块连接示意图])
 
 连接主电池供电，将飞控背面的开关拨动到 ON 位置，此时几个指示灯应亮起。
 
 === 测试电机
 
-#image("assets/image-6.png") // 连接上位机，在 Outputs 页面的 Motor 菜单中勾选 I understand the risks, propellers are removed - Enable motor control.
+#figure(
+  image("assets/inav-outputs-motor-enable-control.png", width: 90%),
+  caption: [Motor 菜单启用电机控制]
+)
 // 确保螺旋桨未连接，然后将左侧的三个滑块（分别对应Motor1，Motor2和两者同时）调整少许，当电机控制值大于 5% 时电机应转动，验证飞控动力部分工作正常。
 // 低速下用手接触电机转轴感受其转动方向，两个电机转动方向应相反。若电机正反转颠倒，可直接交换电机两根线。
 
 === 配置 Mixer 混控（差速）
 
-// todo: 完善本节图文
+差速纸飞机通常不需要舵面（Servo），只需配置两路电机（Motor）的混控即可。
 
-进入 *Mixer* 页面，按差速纸飞机的两路电机混控设置：
+1. 进入 *Mixer* 页面，确认当前为默认状态（如下图）。
 
-#image("assets/image.png") // configurator进入在Mixer页面，图片展示的是未配置的默认状态
-#image("assets/image-1.png") // 在 Mixer preset 选择 Flying Wing with differential thrust, 点击 Load mixer
-#image("assets/image-2.png") // 在下方的 Servo Mixer 菜单中删除(Delete)所有的舵机
-#image("assets/image-4.png") // 在 Motor Mixer 中配置: Motor 1的Roll为0.1, Motor 2的Roll 为-0.1
-// 配置完成后，点击右下角的 Save and Reboot，飞控会自动重启
+#figure(
+  image("assets/inav-mixer-page-default.png", width: 90%),
+  caption: [Mixer 页面默认状态]
+)
+
+2. 在 *Mixer preset* 中选择 *Flying Wing with differential thrust*，点击 *Load mixer*。
+
+#figure(
+  image("assets/inav-mixer-preset-differential-thrust.png", width: 90%),
+  caption: [选择差速混控预设]
+)
+
+3. 在下方 *Servo Mixer* 区域，逐条 *Delete* 删除所有舵机输出项。
+
+#figure(
+  image("assets/inav-mixer-delete-servo-mixers.png", width: 90%),
+  caption: [删除 Servo Mixer 项]
+)
+
+4. 在 *Motor Mixer* 区域，按下表填写两路电机的 Roll/Yaw 混控系数。
 
 #table(
   columns: (1fr, 2fr, 2fr),
@@ -433,27 +465,36 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   [Motor 2], [右电机], [Throttle 1, Roll +0.1, Yaw +0.1],
 )#todo[核实实际推荐配置]
 
+#figure(
+  image("assets/inav-mixer-motor-roll-settings.png", width: 90%),
+  caption: [Motor Mixer 参数设置]
+)
+
+5. 点击右下角 *Save and Reboot* 保存并重启。
+
 #tip[Yaw 的正负号决定转向方向。如果飞机转向相反，交换两个电机的 Yaw 符号即可。]
 
-=== 设置解锁开关
+=== 设置解锁开关#todo[核实步骤]
 + 进入 *Modes* 页面。
 + 找到 *ARM* 模式，点击 *Add Range*。
 + 选择遥控器上的一个开关通道（如 CH 5），设置触发范围（如 1800-2100）。
   - 请先在遥控器上配置好通道映射，确保在Receiver页面可以看到通道数值符合预期。
 + 保存设置。
 
-#image("assets/image-7.png")
+#figure(
+  image("assets/inav-modes-arm-range.png", width: 90%),
+  caption: [ARM 模式范围]
+)
 
 == 第五步：最终连接和遥控器配置
 
 在连接遥控器（对频）之前，请先将电池和电机如下图连接到飞控，但无需连接 USB 串口线。
 
-// todo: center & add caption
 #figure(
   block(
-    trimmed-image(
-      "assets/annotation_07.png", trim: (
-      left: 17%, right: 25%, top: 18%, bottom: 10%
+  trimmed-image(
+    "assets/annotation_07.png", trim: (
+    left: 17%, right: 25%, top: 18%, bottom: 10%
       )
     ),
     width: 60%

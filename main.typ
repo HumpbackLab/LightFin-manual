@@ -55,6 +55,62 @@
   caption: caption,
 )
 
+#let trimmed-image = (path, trim: (:), alt: none) => context {
+  let img = image(path)
+  // Get dimensions of the source image
+  let dims = measure(img)
+
+  layout(size => {
+    let left = trim.at("left", default: 0.0%)
+    let right = trim.at("right", default: 0.0%)
+
+    let top = trim.at("top", default: 0.0%)
+    let bottom = trim.at("bottom", default: 0.0%)
+
+    let width-rel-trimmed = 100.0% - left - right
+    let height-rel-trimmed = 100.0% - top - bottom
+
+    let width-source-trimmed = dims.width * width-rel-trimmed
+    let height-source-trimmed = dims.height * height-rel-trimmed
+
+    // Aspect ratio h/w of the layout (available space)
+    let aspect-height-layout = size.height / size.width
+    // Aspect ratio h/w of the trimmed image
+    let aspect-height-trimmed = height-source-trimmed / width-source-trimmed
+
+    let width-final-trimmed = none
+    let height-final-trimmed = none
+
+    // Compute final size of trimmed image 
+    // by expanding along dimension that first hits the layout constraints
+    if aspect-height-layout >= aspect-height-trimmed {
+      // Expand width of image
+      width-final-trimmed = size.width
+      height-final-trimmed = aspect-height-trimmed * width-final-trimmed
+    } else {
+      // Expand height of image
+      height-final-trimmed = size.height
+      width-final-trimmed = size.height / aspect-height-trimmed
+    }
+
+    // Compute the hypothetical size of the image without trimming
+    let width-final-untrimmed = width-final-trimmed / float(width-rel-trimmed)
+    let height-final-untrimmed = height-final-trimmed / float(height-rel-trimmed)
+
+    box(
+      clip: true, 
+      inset: (
+          top: -(top * height-final-untrimmed), 
+          bottom: -(bottom * height-final-untrimmed),
+          left: -(left * width-final-untrimmed),
+          right: -(right * width-final-untrimmed)
+        ), 
+      // TODO: Handle explicit sizing according to a parameter (e.g. don't scale over DPI limits)
+      image(path, width: width-final-untrimmed, height: height-final-untrimmed, alt: alt)
+    )
+  })
+}
+
 #let caution(body) = block(
   fill: rgb("#fff5f5"),
   stroke: (left: 4pt + red),
@@ -73,8 +129,6 @@
   [*提示：* #body],
 )
 
-// 注释图已由 Python 生成，位于 assets/pcb-*-annotated.png
-
 // 封面
 #align(center + horizon)[
   #block(inset: 3em)[
@@ -85,7 +139,7 @@
     #text(11pt, gray)[面向差速固定翼与轻量机型的 1S 一体式飞控解决方案]
   ]
 
-  #placeholder("产品外观与接口示意图", height: 15em) #todo[补充实物外观与接口示意图]
+  #placeholder("产品外观与接口示意图", img_path: "assets/image-2.png", height: 15em) #todo[补充实物外观与接口示意图]
 
   #v(1fr)
   #text(10pt, gray)[文档版本：v1.0 | 最后更新：2026年1月28日] \
@@ -150,7 +204,7 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
   radius: 4pt,
   width: 100%,
 )[
-  *极简起飞路径*：如果飞控已由卖家预配置好机型参数，你只需完成以下步骤即可首飞：#todo[飞控的出厂配置好还要用户配吗]
+  *极简起飞路径*：如果飞控已由卖家预配置好机型参数，你只需完成以下步骤即可首飞：
   + *装机*（第二步的电机接线）：将电机连接到飞控
   + *对频*（第五步）：让遥控器与飞控建立连接
   + *首飞检查*（第六步）：确认一切正常后起飞
@@ -164,7 +218,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 1. 访问官方下载页面：
    - *GitHub Releases*: #link("https://github.com/iNavFlight/inav-configurator/releases")[https://github.com/iNavFlight/inav-configurator/releases] // 优化这个链接的样式
-   - 选择最新版本，下载对应操作系统的安装包。如 `INAV-Configurator_win64_x.x.x.exe`）#todo[9.0.0发布了，是否适用？]
+   - 选择最新版本，下载对应操作系统的安装包。如 `INAV-Configurator_win64_x.x.x.exe`
 2. 安装并运行 INAV Configurator。
 3. 首次运行时，Windows 可能提示安装驱动，按提示完成即可。
 
@@ -209,7 +263,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 ==== 准备材料
 
 #table(
-  columns: 2,
+  columns: 3,
   rows: 2,
   inset: 8pt,
   align: horizon + center,
@@ -218,8 +272,8 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   // 这里添加表头，优化布局，使得表格更紧凑
   [#image("assets/usb-to-ttl.png", width: 80%)],
   [#image("assets/sh1.0-to-2.54.png", width: 80%)],
-  // [#image("assets/battery.png", width: 80%)],
-  [USB-TTL 串口模块\ 需支持 3.3V TTL 电平],[SH1.0-4Pin 转杜邦线],// [1S 锂电池], 
+  [#image("assets/battery.png", width: 80%)],
+  [3.3V 电平 USB 串口模块], [SH1.0-4Pin 转杜邦线], [1S 锂电池], 
   
 )#todo[A4纸/折纸教程？]
 
@@ -238,23 +292,20 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   [Pin 4 (TX)], [串口模块 RX], [飞控发送 → 电脑接收],
 )
 
-#figure(image("assets/annotation_03.png", width: 100%), caption: [USB-TTL 串口模块到飞控 UART1 接线示意图])
+#figure(image("assets/annotation_06.png", width: 100%, fit: "stretch"), caption: [USB-TTL 串口模块到飞控 UART1 接线示意图])
 
 #caution[TX/RX 交叉连接！飞控的 RX 接串口模块的 TX，飞控的 TX 接串口模块的 RX。]
 
 ==== 连接步骤
+
+#figure(image("assets/inav-config-connect.png", width: 90%), caption: [连接界面])
 1. 按上表接好线，将 USB-TTL 模块插入电脑。
 // 2. 给飞控接上 1S 电池，拨动开关上电。
 3. 打开 INAV Configurator，左上角选择正确的串口（如 `COM3` 或 `/dev/ttyUSB0`）。
 4. 波特率保持默认 *115200*，点击 *Connect*。
 5. 连接成功后进入配置界面。
 
-#caution[首次连接配置向导阶段，请勿连接电机！INAV 在选择 Airplane 模式后，默认会激活电调输出，可能导致连接的电机意外转动，造成电脑 USB 端口保护性断开，或造成人身伤害。请在配置完成后再连接电机。]
-
-
-成功连接 INAV Configurator 后的界面如右图所示。请确保左上角显示已连接的串口端口名称，这表明飞控已与上位机正常通信。
-
-#figure(image("assets/inav-config-connect.png", width: 90%), caption: [连接成功界面])
+#caution[首次连接配置向导阶段，请勿连接电机！默认配置下，INAV 会激活电调输出，可能导致连接的电机意外转动，造成电脑 USB 端口保护性断开，或造成人身伤害。请在配置完成后再连接电机。]
 
 
 == 第三步：首次连接配置向导
@@ -270,26 +321,27 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 #figure(image("assets/inav-config-receiver-wizard.png", width: 80%), caption: [INAV Configurator 首次连接配置向导 - 接收机配置])
 
 接收机配置：
-1. *Serial Receiver Provider*: 选择 *CRSF*
-2. *Receiver UART*: 选择 *UART7*
++ *Serial Receiver Provider*: 选择 *CRSF*
++ *Receiver UART*: 选择 *UART7*
++ 单击右下角 `Next`
 
-完成向导后点击 *Apply* 保存设置。
+#image("assets/image.png") // todo: 首次连接增加了这一步，请阅读图片、给图片重命名并给出配置教程。
+// todo: 上面点击next之后，飞控会保存参数并重启。
 
+// 下面开始是重启之后
 首次配置向导完成后，Status 页面将显示飞控的整体状态。如图所示，请确保左侧的传感器状态（陀螺仪、加速度计、磁力计、气压计）均为蓝色，这表示硬件连接和识别正常。右侧的 "Pre-arming checks" 列表在此时可能会显示一些红色的叉（例如传感器未校准、飞行模式未设置等），这是正常的。这些红色的检查项将在后续的校准和设置步骤中逐一解决，请暂时忽略。
 
 #figure(image("assets/inav-config-status-page.png", width: 90%), caption: [Status 页面])
 
 === 传感器校准
 
-接下来进行传感器校准是确保飞控正常工作和飞行安全的关键步骤。校准包括加速度计和磁力计，它们用于提供飞控的姿态和方向信息。请进入 INAV Configurator 的左侧导航栏，点击 *Calibration* 页面。
+接下来进行传感器校准，包括加速度计和磁力计，它们用于提供飞控的姿态和方向信息。请进入 INAV Configurator 的左侧导航栏，点击 *Calibration* 页面。
 
 首先进行加速度计校准。在 Calibration 页面，点击 "Calibrate Accelerometer" 按钮。
 
-// todo: 这里描述不够详细。请按照加速度计和磁力计分两步。校准加速度计时，需要将飞控 pcb 按照正面朝上、反面朝上、各个侧面朝上的顺序依次静置和点击 Calibrate Accelerometer 按钮，点亮每个灰色的step，直到完全点亮。
-
 #figure(image("assets/inav-calibration-start.png", width: 90%), caption: [校准开始界面])
 
-此时，您需要将飞控板按照不同的方向（正面朝上、反面朝上、左侧朝上、右侧朝上、机头朝上、机尾朝上，共六个方向）依次静置在水平表面上。每静置一个方向后，点击一次 Calibrate Accelerometer 按钮，直到界面中的所有灰色方块都被点亮。
+然后，将飞控板按照不同的方向（正面朝上、反面朝上、左侧朝上、右侧朝上、机头朝上、机尾朝上，共六个方向）依次静置在水平表面上。每静置一个方向后，点击一次 Calibrate Accelerometer 按钮，直到界面中的所有灰色方块都被点亮。
 
 #figure(image("assets/inav-calibration-accel-done.png", width: 90%), caption: [加速度计校准完成])
 
@@ -305,12 +357,22 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 #figure(image("assets/inav-prearm-green.png", width: 90%), caption: [解锁检查通过])
 
+// todo: 【重要】这里添加一段配置电机模式为pwm的段落，在连接电机前必须完成此步骤，否则可能造成危险
+
 == 第四步：配置差速纸飞机
 
-差速纸飞机使用左右两个电机的转速差实现转向，无需舵面。以下是更详细的配置说明：#todo[核实实际配置]
+差速纸飞机使用左右两个电机的转速差实现转向，无需舵面。请根据下面的步骤依次配置电机和混控：
 
-=== 确认传感器状态
-进入 *Setup* 页面，确认传感器状态正常（加速度计、陀螺仪、磁力计、气压计均显示绿色）。
+=== 配置 Outputs（连接电机）
+在配置输出前，需要先如下图把两路电机接到飞控PWM输出接口。
+// todo: 新增加的电机/电池/usb串口连接示意图
+#image("assets/annotation_04.png", width: 90%, height: 8.2cm)
+1. 确保螺旋桨未安装。
+2. 将左电机连接到 *PWM1/M1*，右电机连接到 *PWM2/M2*。
+3. 连接主电池供电，打开开关，确保飞控正常上电。
+4. 连接上位机、打开 *Outputs* 页面，保持默认油门最小值，确认界面能识别通道。
+   
+#image("assets/image-1.png") // todo: 新加入的mixer页面截图
 
 === 配置 Mixer 混控（差速）
 进入 *Mixer* 页面，按差速纸飞机的两路电机混控设置：
@@ -355,6 +417,12 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 == 第五步：遥控器对频
 
+// todo: 在连接遥控器前，先按照下图方式连接电池和电机，不用连接串口。
+// todo: center & add caption
+#block(trimmed-image("assets/annotation_07.png", trim: (
+  left: 17%, right: 25%
+)), width: 80%)
+
 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 
 === 对频前准备
@@ -377,7 +445,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   请在遥控器端设置相同的对频密码，飞控上电后将自动连接。
 ]
 
-==== 在遥控器上设置对频密码
+==== 在遥控器上设置对频密码 #todo[具体步骤待确认]
 
 1. *通过 Lua 脚本设置*（OpenTX/EdgeTX）：
    - 长按 *SYS* 键进入系统菜单，选择 *ELRS* Lua 脚本。
@@ -397,14 +465,16 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 2. 打开遥控器，等待数秒，LED 应变为慢闪或常亮。
 3. 连接 INAV Configurator，进入 *Receiver* 页面，拨动遥控器摇杆确认响应正常。
 
-#tip[密码对频的优势：无需在特定时间窗口内操作，只要密码一致，每次上电都会自动连接。]
-
-#tip[如果对频失败，依次检查：1) 遥控器与飞控的 *Binding Phrase* 是否完全一致（区分大小写）；2) 遥控器与飞控的 ELRS 固件主版本是否一致（建议均为 3.x）；3) INAV *Ports* 页 UART7 是否勾选 Serial Rx，*Receiver* 页是否选择 Serial/CRSF；4) 更换 USB 线或端口后重连再试。]
+#tip[
+  如果对频失败，依次检查：
+  + 遥控器与飞控的对频密码（Binding Phrase）是否完全一致（区分大小写）；
+  + 遥控器与飞控的 ELRS 固件主版本是否一致（建议均为 3.x，例如3.6.2）。
+]
 
 === 通过 WiFi 更新 ELRS 固件
 出厂固件已预装，一般无需更新。如需升级：
 
-1. 飞控上电，60 秒后 ELRS 自动开启 WiFi 热点（SSID 类似 `ExpressLRS RX`）。
+1. 飞控上电，60 秒后 ELRS 自动开启 WiFi 热点（名称默认为 `ExpressLRS RX`）。
 2. 电脑连接该热点，密码默认为 `expresslrs`。
 3. 浏览器访问 `http://10.0.0.1`，进入 ELRS Web UI。
 4. 上传新固件（`.bin` 文件），等待重启更新完成。
@@ -443,7 +513,6 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 == 关键接口连接
 #figure(image("assets/annotation_01.png", width: 100%), caption: [PCB正面接线示意图])
-// #placeholder("整机接线总览示意图", height: 12em) #todo[补充整机接线示意图]
 
 === 机体安装与方向
 - 飞控应安装在机体重心附近，尽量保持水平。

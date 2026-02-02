@@ -1,0 +1,36 @@
+name: Build PDF and Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: typst-community/setup-typst@v4
+
+      - name: Compile PDF
+        run: typst compile main.typ main.pdf
+
+      - name: Create tag
+        run: |
+          tag="build-$(date -u +'%Y%m%d-%H%M%S')-${GITHUB_RUN_NUMBER}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$tag"
+          git push origin "$tag"
+          echo "release_tag=$tag" >> "$GITHUB_ENV"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.release_tag }}
+          name: ${{ env.release_tag }}
+          files: main.pdf

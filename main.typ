@@ -1,4 +1,4 @@
-#import "@preview/dashy-todo:0.0.3": todo
+#import "@preview/dashy-todo:0.1.3": todo
 
 #set text(
   // 请忽略字体问题，无需在意

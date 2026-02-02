@@ -16,26 +16,33 @@ jobs:
 
       - uses: typst-community/setup-typst@v4
 
+      - name: Set build version
+        run: |
+          build_time="$(date -u +'%Y%m%d-%H%M%S')"
+          tag="build-${build_time}-${GITHUB_RUN_NUMBER}"
+          pdf_name="flight-controller-manual-${build_time}.pdf"
+          echo "build_time=${build_time}" >> "$GITHUB_ENV"
+          echo "release_tag=${tag}" >> "$GITHUB_ENV"
+          echo "pdf_name=${pdf_name}" >> "$GITHUB_ENV"
+
       - name: Install CJK fonts
         run: |
           sudo apt-get update
           sudo apt-get install -y fonts-noto-cjk fonts-noto-core
 
       - name: Compile PDF
-        run: typst compile main.typ main.pdf
+        run: typst compile main.typ "${{ env.pdf_name }}"
 
       - name: Create tag
         run: |
-          tag="build-$(date -u +'%Y%m%d-%H%M%S')-${GITHUB_RUN_NUMBER}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "$tag"
-          git push origin "$tag"
-          echo "release_tag=$tag" >> "$GITHUB_ENV"
+          git tag "${{ env.release_tag }}"
+          git push origin "${{ env.release_tag }}"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.release_tag }}
           name: ${{ env.release_tag }}
-          files: main.pdf
+          files: ${{ env.pdf_name }}

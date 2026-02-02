@@ -538,9 +538,11 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 ==== 验证对频成功
 1. 飞控上电，观察 ELRS LED 状态：
-   - *快闪*：未连接，正在搜索
-   - *慢闪或常亮*：已连接成功
-2. 打开遥控器，等待数秒，LED 应变为慢闪或常亮。
+   - *慢闪（500ms 亮/灭）*：等待连接
+   - *快闪（25ms 亮/灭）*：WiFi 模式
+   - *常亮*：已连接或处于烧录模式
+   - 官方说明：#link("https://www.expresslrs.org/quick-start/led-status/#receivertransmitter-led-status")[ExpressLRS LED Status]
+2. 打开遥控器，等待数秒，LED 应变为常亮。
 3. 连接 INAV Configurator，进入 *Receiver* 页面，拨动遥控器摇杆确认响应正常。
 
 #tip[
@@ -609,7 +611,8 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 === UART 连接
 - *UART1*：正面SH1.0-4Pin连接器，连接上位机。
-- *ELRS/CRSF串口*：ELRS 通信使用，已连接AT32-UART7和ELRS-UART0，烧录ELRS时使用。
+- *ELRS/CRSF串口*：ELRS 通信使用，已连接AT32-UART7和ELRS-UART0，用于 ESP8285/ELRS 烧录。
+- *UART5*：备用串口，通过测试点引出。
 
 == 固件烧录流程
 
@@ -628,9 +631,10 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 === ESP8285 ELRS 固件
 1. 使用镊子短接 GPIO0 与 GND，使 ESP 进入 Bootloader。
-2. 通过 USB-UART 连接 UART5（TP18/TP7）。
-3. 复位 ESP（断电重上电或拉低 ESP_NRST）进入下载模式。
-4. 打开 ELRS Configurator，选择与下图一致的配置并选择串口刷写。
+2. 通过 USB-UART 连接 UART7（ELRS/CRSF）。
+3. UART5（TP18/TP7）为备用串口，通常不用于 ESP8285 烧录。
+4. 复位 ESP（断电重上电或拉低 ESP_NRST）进入下载模式。
+5. 打开 ELRS Configurator，选择与下图一致的配置并选择串口刷写。
 
 #figure(image("assets/elrs-config1.png", width: 80%), caption: [ELRS Configurator 配置截图 1])
 #figure(image("assets/elrs-config2.png", width: 80%), caption: [ELRS Configurator 配置截图 2])
@@ -682,8 +686,8 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
   [*UART*], [*用途*], [*备注*],
   [UART1], [MSP/CLI 上位机], [通过 U12 连接],
-  [UART5], [ESP8285 串口烧录], [通过 TP7/TP18 测试点],
-  [UART7], [ELRS/CRSF 内部链路], [板载 ELRS 使用，默认不外接],
+  [UART5], [备用串口], [通过 TP7/TP18 测试点],
+  [UART7], [ELRS/CRSF 内部链路], [板载 ELRS 使用，兼作 ESP8285 烧录],
 )
 
 === 电源输入（U13，ZX-MX1.25-2PWT）
@@ -756,15 +760,15 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   [TP8], [VBAT], [目标供电],
 )
 
-=== ESP 烧录/调试测试点
+=== 备用串口测试点（UART5）
 #table(
   columns: (1fr, 1.6fr, 2fr),
   inset: 8pt,
   align: horizon + center,
 
   [*测试点*], [*Net*], [*说明*],
-  [TP18], [UART5_TX], [ESP 串口发送],
-  [TP7], [UART5_RX], [ESP 串口接收],
+  [TP18], [UART5_TX], [备用串口发送],
+  [TP7], [UART5_RX], [备用串口接收],
   [TP15], [GPIO0], [Bootloader 拉低进入烧录],
   [TP1/TP9], [GND], [参考地],
 )

@@ -1,8 +1,7 @@
 #import "@preview/dashy-todo:0.1.3": todo
 
 #set text(
-  // 请忽略字体问题，无需在意
-  font: ("Noto Sans", "Source Han Sans SC", "Microsoft YaHei"),
+  font: ("Noto Sans", "Noto Sans CJK SC"),
   size: 11pt,
   lang: "zh",
   region: "cn",

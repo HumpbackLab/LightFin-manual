@@ -1,6 +1,6 @@
 # AGENT GUIDELINES FOR FLIGHT-MANUAL REPOSITORY
 
-This document provides guidelines for AI agents operating within the `flight-manual` Typst project. The goal is to ensure consistency, maintainability, and efficiency in agentic code generation and modifications. Adhering to these guidelines will help in producing high-quality, predictable, and easily auditable changes within the codebase.
+This document provides guidelines for AI agents operating within the `flight-controller-manual` Typst project. The goal is to ensure consistency, maintainability, and efficiency in agentic code generation and modifications. Adhering to these guidelines will help in producing high-quality, predictable, and easily auditable changes within the codebase.
 
 ## 1. Project Overview
 
@@ -67,7 +67,3 @@ Consistency in code style is paramount for collaborative projects.
     *   **Main File**: `main.typ` should primarily orchestrate the document structure and import other modules. It should contain minimal direct content or styling.
     *   **Component/Module Separation**: Break down the document into logical `.typ` files (e.g., `sections/chapter1.typ`, `styles/layout.typ`, `components/figure.typ`). This enhances readability, reusability, and maintainability.
     *   **Declarative over Imperative**: Where possible, prefer declarative Typst features (e.g., `#show` rules, `#set` rules) to define styling and layout over imperative manipulation.
-
-## 5. Cursor / Copilot Rules (No specific rules found)
-
-A search for `.cursor/rules/`, `.cursorrules`, or `.github/copilot-instructions.md` yielded no results. This indicates that there are currently no explicit agent-specific rules configured through these tools within this repository. Therefore, agents should adhere strictly to the general guidelines outlined in this `AGENTS.md` and leverage their general knowledge of best practices for code generation and modification. If such configuration files are introduced in the future, agents should incorporate and prioritize those rules accordingly.

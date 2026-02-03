@@ -21,9 +21,11 @@ jobs:
           build_time="$(date -u +'%Y%m%d-%H%M%S')"
           tag="build-${build_time}-${GITHUB_RUN_NUMBER}"
           pdf_name="flight-controller-manual-${build_time}.pdf"
+          html_name="flight-controller-manual-${build_time}.html"
           echo "build_time=${build_time}" >> "$GITHUB_ENV"
           echo "release_tag=${tag}" >> "$GITHUB_ENV"
           echo "pdf_name=${pdf_name}" >> "$GITHUB_ENV"
+          echo "html_name=${html_name}" >> "$GITHUB_ENV"
 
       - name: Install CJK fonts
         run: |
@@ -32,6 +34,9 @@ jobs:
 
       - name: Compile PDF
         run: typst compile main.typ "${{ env.pdf_name }}"
+
+      - name: Compile HTML
+        run: typst compile --features html --format html main.typ "${{ env.html_name }}"
 
       - name: Create tag
         run: |
@@ -45,4 +50,6 @@ jobs:
         with:
           tag_name: ${{ env.release_tag }}
           name: ${{ env.release_tag }}
-          files: ${{ env.pdf_name }}
+          files: |
+            ${{ env.pdf_name }}
+            ${{ env.html_name }}

@@ -138,7 +138,7 @@
     #text(11pt, gray)[面向差速固定翼与轻量机型的 1S 一体式飞控解决方案]
   ]
 
-  #placeholder("产品外观与接口示意图", img_path: "assets/product-overview.png", height: 15em)
+  #placeholder("产品外观与接口示意图", img_path: "assets/product-overview.aggressive-plus.jpg", height: 15em)
 
   #v(1fr)
   #text(10pt, gray)[文档版本：v1.0 | 最后更新：2026年1月28日] \
@@ -182,12 +182,12 @@
 
 = 硬件概览 <hardware>
 
-// #figure(image("assets/pcb-top-view.png", width: 100%), caption: [PCB 顶层布局图])
+// #figure(image("assets/pcb-top-view.aggressive-plus.jpg", width: 100%), caption: [PCB 顶层布局图])
 
-#figure(image("assets/annotation_01.png", width: 90%), caption: [PCB 顶层布局图])
-// #figure(rotate(180deg, image("assets/pcb-bottom-view.png", width: 100%)), caption: [PCB 底层布局图])
+#figure(image("assets/annotation_01.aggressive-plus.jpg", width: 90%), caption: [PCB 顶层布局图])
+// #figure(rotate(180deg, image("assets/pcb-bottom-view.aggressive-plus.jpg", width: 100%)), caption: [PCB 底层布局图])
 
-#figure(image("assets/annotation_02.png", width: 90%, height: 10cm), caption: [PCB 底层布局图])
+#figure(image("assets/annotation_02.aggressive-plus.jpg", width: 90%, height: 10cm), caption: [PCB 底层布局图])
 == 指示灯与按键
 - *LED 状态灯*：板载 3 颗状态灯，其中 2 颗由 MCU 控制、1 颗由 ESP（ELRS_LED）控制。
 - *电源/功能按键*：板载滑动开关，用于电源控制。
@@ -245,9 +245,9 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   align: horizon + center,
   // stroke: none,
 
-  [#image("assets/usb-to-ttl.png", width: 80%)],
-  [#image("assets/sh1.0-to-2.54.png", width: 80%)],
-  [#image("assets/battery.png", width: 80%)],
+  [#image("assets/usb-to-ttl.aggressive-plus.jpg", width: 80%)],
+  [#image("assets/sh1.0-to-2.54.aggressive-plus.jpg", width: 80%)],
+  [#image("assets/battery.aggressive-plus.jpg", width: 80%)],
   [3.3V 电平 USB 串口模块], [SH1.0-4Pin 转杜邦线], [1S 锂电池], 
 
 )#todo[A4纸/折纸教程？]
@@ -267,13 +267,13 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   [Pin 4 (TX)], [串口模块 RX], [飞控发送 → 电脑接收],
 )
 
-#figure(image("assets/annotation_06.png", width: 100%, fit: "stretch"), caption: [USB-TTL 串口模块到飞控 UART1 接线示意图])
+#figure(image("assets/annotation_06.aggressive-plus.jpg", width: 100%, fit: "stretch"), caption: [USB-TTL 串口模块到飞控 UART1 接线示意图])
 
 #caution[TX/RX 交叉连接！飞控的 RX 接串口模块的 TX，飞控的 TX 接串口模块的 RX。]
 
 ==== 连接步骤
 
-#figure(image("assets/inav-config-connect.png", width: 90%), caption: [连接界面])
+#figure(image("assets/inav-config-connect.aggressive-plus.png", width: 90%), caption: [连接界面])
 1. 按上表接好线，将 USB-TTL 模块插入电脑。
 // 2. 给飞控接上 1S 电池，拨动开关上电。
 3. 打开 INAV Configurator，左上角选择正确的串口（如 `COM3` 或 `/dev/ttyUSB0`）。
@@ -287,20 +287,20 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 首次连接飞控时，INAV Configurator 会弹出配置向导，帮助你快速完成基本设置。
 
-#figure(image("assets/inav-config-default-values.png", width: 80%), caption: [INAV Configurator 首次连接配置向导 - 机型选择])
+#figure(image("assets/inav-config-default-values.aggressive-plus.jpg", width: 80%), caption: [INAV Configurator 首次连接配置向导 - 机型选择])
 
 在配置向导中：
 1. *Platform type*: 选择 *Airplane*
 2. *Mixer preset*: 选择 *Airplane without a tail (Wing, Delta, etc)*
 
-#figure(image("assets/inav-config-receiver-wizard.png", width: 80%), caption: [INAV Configurator 首次连接配置向导 - 接收机配置])
+#figure(image("assets/inav-config-receiver-wizard.aggressive-plus.jpg", width: 80%), caption: [INAV Configurator 首次连接配置向导 - 接收机配置])
 
 接收机配置：
 + *Serial Receiver Provider*: 选择 *CRSF*
 + *Receiver UART*: 选择 *UART7*
 + 单击右下角 `Next`
 
-#figure(image("assets/inav-config-platform-type-selection.png", width: 80%), caption: [INAV Configurator 首次连接配置向导 - GPS 向导])
+#figure(image("assets/inav-config-platform-type-selection.aggressive-plus.jpg", width: 80%), caption: [INAV Configurator 首次连接配置向导 - GPS 向导])
 
 首次连接向导会根据你选择的平台类型进行配置。
 飞控将保存这些参数并自动重启。
@@ -308,7 +308,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 // 下面开始是重启之后
 首次配置向导完成后，Status 页面将显示飞控的整体状态。如图所示，请确保左侧的传感器状态（陀螺仪、加速度计、磁力计、气压计）均为蓝色，这表示硬件连接和识别正常。右侧的 "Pre-arming checks" 列表在此时可能会显示一些红色的叉（例如传感器未校准、飞行模式未设置等），这是正常的。这些红色的检查项将在后续的校准和设置步骤中逐一解决，请暂时忽略。
 
-#figure(image("assets/inav-config-status-page.png", width: 90%), caption: [Status 页面])
+#figure(image("assets/inav-config-status-page.aggressive-plus.jpg", width: 90%), caption: [Status 页面])
 
 === 传感器校准
 
@@ -316,23 +316,23 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 首先进行加速度计校准。在 Calibration 页面，点击 "Calibrate Accelerometer" 按钮。
 
-#figure(image("assets/inav-calibration-start.png", width: 90%), caption: [校准开始界面])
+#figure(image("assets/inav-calibration-start.aggressive-plus.jpg", width: 90%), caption: [校准开始界面])
 
 然后，将飞控板按照不同的方向（正面朝上、反面朝上、左侧朝上、右侧朝上、机头朝上、机尾朝上，共六个方向）依次静置在水平表面上。每静置一个方向后，点击一次 Calibrate Accelerometer 按钮，直到界面中的所有灰色方块都被点亮。
 
-#figure(image("assets/inav-calibration-accel-done.png", width: 90%), caption: [加速度计校准完成])
+#figure(image("assets/inav-calibration-accel-done.aggressive-plus.jpg", width: 90%), caption: [加速度计校准完成])
 
 如上图，加速度计校准成功后，接下来进行磁力计校准（Compass Calibration）。点击 "Calibrate Compass" 按钮，在 30 秒的时间内：将飞控握在空中，缓慢、平稳地旋转飞控，使其每一个面（包括前、后、左、右、顶部和底部）都依次朝向地面。此过程旨在让飞控的磁力计学习所有方向的磁场数据。
 
 #tip[请务必确保在校准过程中，飞控附近没有磁铁或任何电磁干扰源，以免影响校准的准确性。]
 
-#figure(image("assets/inav-calibration-compass-done.png", width: 90%), caption: [磁力计校准完成])
+#figure(image("assets/inav-calibration-compass-done.aggressive-plus.jpg", width: 90%), caption: [磁力计校准完成])
 
 磁力计校准完成后，所有校准任务即告一段落。此时，请务必点击右下角的 "Save and Reboot" 按钮，保存您的设置并让飞控重新启动，使新的校准数据生效。
 
 飞控重启后，返回 Status 页面。此时您会看到 "Pre-arming checks" 列表已经全部变为绿色。这表示所有飞行前的安全检查均已通过，飞机已准备好解锁（ARM）并进行飞行。
 
-#figure(image("assets/inav-prearm-green.png", width: 90%), caption: [解锁检查通过])
+#figure(image("assets/inav-prearm-green.aggressive-plus.jpg", width: 90%), caption: [解锁检查通过])
 
 === 预配置电机模式
 
@@ -348,7 +348,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 2. 左侧导航栏进入 *Outputs* 页面（如下图）。
 
 #figure(
-  image("assets/inav-outputs-page.png", width: 90%),
+  image("assets/inav-outputs-page.aggressive-plus.jpg", width: 90%),
   caption: [Outputs 页面]
 )
 #tip[
@@ -359,7 +359,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 4. 将 *ESC protocol* 设置为 *BRUSHED*（有刷电机）。
 
 #figure(
-  image("assets/inav-outputs-enable-brushed.png", width: 90%),
+  image("assets/inav-outputs-enable-brushed.aggressive-plus.png", width: 90%),
   caption: [启用输出并设置 BRUSHED]
 )
 
@@ -416,14 +416,14 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 )
 
 下图给出了电机、电池与 USB-TTL 串口的同时连接方式，供接线核对：
-#figure(image("assets/annotation_04.png", width: 90%, height: 8.2cm), caption: [电机、电池及USB串口模块连接示意图])
+#figure(image("assets/annotation_04.aggressive-plus.jpg", width: 90%, height: 8.2cm), caption: [电机、电池及USB串口模块连接示意图])
 
 连接主电池供电，将飞控背面的开关拨动到 ON 位置，此时几个指示灯应亮起。
 
 === 测试电机
 
 #figure(
-  image("assets/inav-outputs-motor-enable-control.png", width: 90%),
+  image("assets/inav-outputs-motor-enable-control.aggressive-plus.jpg", width: 90%),
   caption: [Motor 菜单启用电机控制]
 )
 // 确保螺旋桨未连接，然后将左侧的三个滑块（分别对应Motor1，Motor2和两者同时）调整少许，当电机控制值大于 5% 时电机应转动，验证飞控动力部分工作正常。
@@ -436,21 +436,21 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 1. 进入 *Mixer* 页面，确认当前为默认状态（如下图）。
 
 #figure(
-  image("assets/inav-mixer-page-default.png", width: 90%),
+  image("assets/inav-mixer-page-default.aggressive-plus.jpg", width: 90%),
   caption: [Mixer 页面默认状态]
 )
 
 2. 在 *Mixer preset* 中选择 *Flying Wing with differential thrust*，点击 *Load mixer*。
 
 #figure(
-  image("assets/inav-mixer-preset-differential-thrust.png", width: 90%),
+  image("assets/inav-mixer-preset-differential-thrust.aggressive-plus.png", width: 90%),
   caption: [选择差速混控预设]
 )
 
 3. 在下方 *Servo Mixer* 区域，逐条 *Delete* 删除所有舵机输出项。
 
 #figure(
-  image("assets/inav-mixer-delete-servo-mixers.png", width: 90%),
+  image("assets/inav-mixer-delete-servo-mixers.aggressive-plus.jpg", width: 90%),
   caption: [删除 Servo Mixer 项]
 )
 
@@ -467,7 +467,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 )#todo[核实实际推荐配置]
 
 #figure(
-  image("assets/inav-mixer-motor-roll-settings.png", width: 90%),
+  image("assets/inav-mixer-motor-roll-settings.aggressive-plus.png", width: 90%),
   caption: [Motor Mixer 参数设置]
 )
 
@@ -483,7 +483,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 + 保存设置。
 
 #figure(
-  image("assets/inav-modes-arm-range.png", width: 90%),
+  image("assets/inav-modes-arm-range.aggressive-plus.jpg", width: 90%),
   caption: [ARM 模式范围]
 )
 
@@ -494,7 +494,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 #figure(
   block(
   trimmed-image(
-    "assets/annotation_07.png", trim: (
+    "assets/annotation_07.aggressive-plus.jpg", trim: (
     left: 17%, right: 25%, top: 18%, bottom: 10%
       )
     ),
@@ -594,7 +594,7 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 - 准备工具：DAP Link（或兼容 SWD 下载器）、USB-UART（3.3V）、烧录夹、1S 锂电池。
 
 == 关键接口连接
-#figure(image("assets/annotation_01.png", width: 100%), caption: [PCB正面接线示意图])
+#figure(image("assets/annotation_01.aggressive-plus.jpg", width: 100%), caption: [PCB正面接线示意图])
 
 === 机体安装与方向
 - 飞控应安装在机体重心附近，尽量保持水平。
@@ -620,7 +620,7 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 
 #caution[INAV 固件必须通过 SWD 有线方式烧录，需要使用 *6pin 1.25mm 烧录夹*夹在 PCB 底面的测试点焊盘上。请仔细确认线序后再连接！]
 
-#figure(image("assets/debug-probe.png", width: 80%), caption: [烧录夹连接示意图])#todo[需要更新]
+#figure(image("assets/debug-probe.aggressive-plus.jpg", width: 80%), caption: [烧录夹连接示意图])#todo[需要更新]
 
 === AT32 占位固件
 目的：释放 CRSF/UART7 控制权，方便 ESP8285 串口烧录。
@@ -638,8 +638,8 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 4. 复位 ESP（断电重上电或拉低 ESP_NRST）进入下载模式。
 5. 打开 ELRS Configurator，选择与下图一致的配置并选择串口刷写。
 
-#figure(image("assets/elrs-config1.png", width: 80%), caption: [ELRS Configurator 配置截图 1])
-#figure(image("assets/elrs-config2.png", width: 80%), caption: [ELRS Configurator 配置截图 2])
+#figure(image("assets/elrs-config1.aggressive-plus.jpg", width: 80%), caption: [ELRS Configurator 配置截图 1])
+#figure(image("assets/elrs-config2.aggressive-plus.jpg", width: 80%), caption: [ELRS Configurator 配置截图 2])
 
 === AT32 INAV 固件
 1. 通过 DAP Link 连接 SWDIO / SWCLK / GND / VBAT。

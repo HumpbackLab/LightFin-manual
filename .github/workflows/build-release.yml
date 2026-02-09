@@ -20,8 +20,8 @@ jobs:
         run: |
           build_time="$(date -u +'%Y%m%d-%H%M%S')"
           tag="build-${build_time}-${GITHUB_RUN_NUMBER}"
-          pdf_name="flight-controller-manual-${build_time}.pdf"
-          html_name="flight-controller-manual-${build_time}.html"
+          pdf_name="lightfin-manual-${build_time}.pdf"
+          html_name="lightfin-manual-${build_time}.html"
           echo "build_time=${build_time}" >> "$GITHUB_ENV"
           echo "release_tag=${tag}" >> "$GITHUB_ENV"
           echo "pdf_name=${pdf_name}" >> "$GITHUB_ENV"

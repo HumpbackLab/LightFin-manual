@@ -17,7 +17,7 @@
       #set text(8pt, gray)
       #grid(
         columns: (1fr, 1fr),
-        [AT32F435mini INAV 飞控用户手册],
+        [LightFin INAV 飞控用户手册],
         align(right)[版本: v1.0]
       )
       #v(-0.5em)
@@ -131,9 +131,9 @@
 // 封面
 #align(center + horizon)[
   #block(inset: 3em)[
-    #text(28pt, weight: "bold", fill: navy)[AT32F435mini] \
+    #text(28pt, weight: "bold", fill: navy)[LightFin] \
     #v(0.4em)
-    #text(18pt, weight: "medium")[INAV 飞控用户手册] \
+    #text(18pt, weight: "medium")[LightFin INAV 飞控用户手册] \
     #v(1.2em)
     #text(11pt, gray)[面向差速固定翼与轻量机型的 1S 一体式飞控解决方案]
   ]
@@ -142,7 +142,7 @@
 
   #v(1fr)
   #text(10pt, gray)[文档版本：v1.0 | 最后更新：2026年1月28日] \
-  #text(10pt, gray)[适用硬件：AT32F435mini 飞控（INAV 定制固件）]
+  #text(10pt, gray)[适用硬件：LightFin 飞控（AT32F435mini 硬件平台，INAV 定制固件）]
 ]
 
 #pagebreak()
@@ -154,8 +154,10 @@
 
 = 产品概述 <intro>
 
+*LightFin* 是由 *座头鲸工作室 / HumpbackLab* 推出的轻量化固定翼飞控产品。
+
 == 核心定位与适用机型
-AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435* 主控与 *ELRS*（ExpressLRS，开源低延迟射频协议）链路，适用于 1S 供电的轻量机型，尤其适合 *差速控制的无襟翼固定翼*（如纸飞机改装）。板载传感器覆盖 IMU（惯性测量单元）、气压计与磁力计，满足稳定飞行与高度/航向估计的基础需求。
+*LightFin*（硬件平台：AT32F435mini）是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435* 主控与 *ELRS*（ExpressLRS，开源低延迟射频协议）链路，适用于 1S 供电的轻量机型，尤其适合 *差速控制的无襟翼固定翼*（如纸飞机改装）。板载传感器覆盖 IMU（惯性测量单元）、气压计与磁力计，满足稳定飞行与高度/航向估计的基础需求。
 
 == 核心硬件特性
 #table(
@@ -197,7 +199,7 @@ AT32F435mini 是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435*
 
 = 快速上手 <getting-started>
 
-本章面向拿到成品飞控的普通用户，帮助你快速完成连接、配置和起飞。飞控已出厂预装 INAV 和 ELRS 固件，可直接按本章操作。
+本章面向拿到成品 LightFin 飞控的普通用户，帮助你快速完成连接、配置和起飞。LightFin 飞控已出厂预装 INAV 和 ELRS 固件，可直接按本章操作。
 
 #block(
   fill: rgb("#e8f5e9"),
@@ -350,7 +352,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   caption: [Outputs 页面]
 )
 #tip[
-  纸飞机飞控无电流检测电路，在Outputs页面显示的当前电流值无效，可放心忽略。连接电池情况下，Voltage 部分应显示真实电池电压。
+  LightFin 飞控无电流检测电路，在Outputs页面显示的当前电流值无效，可放心忽略。连接电池情况下，Voltage 部分应显示真实电池电压。
 ]
 
 3. 打开 *Enable motor and servo output* 开关。
@@ -501,7 +503,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   caption: [飞控最终连线图]
 )
 
-飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
+LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 
 === 对频前准备
 - 确保遥控器已安装 ELRS 发射模块并刷入对应固件。

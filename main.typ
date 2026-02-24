@@ -525,18 +525,14 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
   请在遥控器端设置相同的对频密码，飞控上电后将自动连接。连接成功后，遥控器应发出提示，同时ELRS指示灯应由慢闪变为常亮。
 ]
 
-==== 在遥控器上设置对频密码 #todo[具体步骤待确认]
+==== 在遥控器上设置对频密码 
 
-1. *通过 Lua 脚本设置*（OpenTX/EdgeTX）：
+*通过 Lua 脚本使高频头进入WIFI模式 设置*：
    - 长按 *SYS* 键进入系统菜单，选择 *ELRS* Lua 脚本。
-   - 找到 *Binding Phrase* 选项。
-   - 输入对频密码：`123456`
-   - 保存并退出。
-
-2. *通过 ELRS Configurator 设置*（刷写固件时）：
-   - 在 ELRS Configurator 中勾选 *Binding Phrase*。
-   - 输入：`123456`
-   - 刷写固件到发射模块。
+   - 进入 *WIFI Connectivity* 选项。
+   - 选择 *Enable WIFI*
+   - 使用电脑或者手机连接遥控器创建的 WiFi 热点，默认名称为 `ExpressLRS TX`，密码为 `expresslrs`。
+  - 在浏览器中访问 `http://10.0.0.1`，在网页中输入Bind Phrase 并保存
 
 ==== 验证对频成功
 1. 飞控上电，观察 ELRS LED 状态：

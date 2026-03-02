@@ -18,25 +18,35 @@ jobs:
 
       - name: Set build version
         run: |
-          build_time="$(date -u +'%Y%m%d-%H%M%S')"
-          tag="build-${build_time}-${GITHUB_RUN_NUMBER}"
-          pdf_name="lightfin-manual-${build_time}.pdf"
-          html_name="lightfin-manual-${build_time}.html"
-          echo "build_time=${build_time}" >> "$GITHUB_ENV"
+          build_date="$(date -u +'%y%m%d')"
+          tag="build-${build_date}-${GITHUB_RUN_NUMBER}"
+          main_pdf_name="lightfin-manual-${build_date}.pdf"
+          main_html_name="lightfin-manual-${build_date}.html"
+          tutorial_pdf_name="lightfin-quick-tutorial-${build_date}.pdf"
+          tutorial_html_name="lightfin-quick-tutorial-${build_date}.html"
+          echo "build_date=${build_date}" >> "$GITHUB_ENV"
           echo "release_tag=${tag}" >> "$GITHUB_ENV"
-          echo "pdf_name=${pdf_name}" >> "$GITHUB_ENV"
-          echo "html_name=${html_name}" >> "$GITHUB_ENV"
+          echo "main_pdf_name=${main_pdf_name}" >> "$GITHUB_ENV"
+          echo "main_html_name=${main_html_name}" >> "$GITHUB_ENV"
+          echo "tutorial_pdf_name=${tutorial_pdf_name}" >> "$GITHUB_ENV"
+          echo "tutorial_html_name=${tutorial_html_name}" >> "$GITHUB_ENV"
 
       - name: Install CJK fonts
         run: |
           sudo apt-get update
           sudo apt-get install -y fonts-noto-cjk fonts-noto-core
 
-      - name: Compile PDF
-        run: typst compile main.typ "${{ env.pdf_name }}"
+      - name: Compile main PDF
+        run: typst compile main.typ "${{ env.main_pdf_name }}"
 
-      - name: Compile HTML
-        run: typst compile --features html --format html main.typ "${{ env.html_name }}"
+      - name: Compile main HTML
+        run: typst compile --features html --format html main.typ "${{ env.main_html_name }}"
+
+      - name: Compile tutorial PDF
+        run: typst compile quick-tutorial.typ "${{ env.tutorial_pdf_name }}"
+
+      - name: Compile tutorial HTML
+        run: typst compile --features html --format html quick-tutorial.typ "${{ env.tutorial_html_name }}"
 
       - name: Create tag
         run: |
@@ -51,5 +61,7 @@ jobs:
           tag_name: ${{ env.release_tag }}
           name: ${{ env.release_tag }}
           files: |
-            ${{ env.pdf_name }}
-            ${{ env.html_name }}
+            ${{ env.main_pdf_name }}
+            ${{ env.main_html_name }}
+            ${{ env.tutorial_pdf_name }}
+            ${{ env.tutorial_html_name }}

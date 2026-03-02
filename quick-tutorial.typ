@@ -152,11 +152,11 @@
 
 #pagebreak()
 
-= 快速上手 <getting-started>
+// = 快速上手 <getting-started>
 
-本章面向拿到成品 LightFin 飞控的普通用户，帮助你快速完成连接、配置和起飞。LightFin 飞控已出厂预装 INAV 和 ELRS 固件，可直接按本章操作。
+本手册面向拿到成品 LightFin 飞控的普通用户，帮助你快速完成连接、配置和起飞。LightFin 飞控已出厂预装 INAV 和 ELRS 固件，可直接按本手册操作。
 
-== 安装 INAV Configurator
+= 安装 INAV Configurator
 
 INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和 Linux。
 
@@ -166,7 +166,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 2. 安装并运行 INAV Configurator。
 3. 首次运行时，Windows 可能提示安装驱动，按提示完成即可。
 
-== 接口一览
+= 接口一览
 
 本节详细描述整个板子的接口（连接电机、舵机、电池、调试接口）和线序。
 
@@ -179,13 +179,13 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 #tip[
   电池接口与电机接口均作了焊接优化，可以焊接裸线到塑料接口上的金属片。注意焊接时间，以防烫坏接口。
 ]
-=== 正方向
+== 正方向
 
 描述板子正方向。飞控应安装在机体重心附近，尽量保持水平。
 
 #figure(image("assets/pcb-bottom-view-with-arrow.png", width: 90%), caption: [飞控方向标识])
 
-== 遥控器对频
+= 遥控器对频
 
 LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 
@@ -201,7 +201,7 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
   请在遥控器端设置相同的对频密码，飞控上电后将自动连接。连接成功后，遥控器应发出提示，同时ELRS指示灯应由慢闪变为常亮。
 ]
 
-=== 在遥控器上设置对频密码
+== 在遥控器上设置对频密码
 *通过 Lua 脚本使高频头进入WIFI模式 设置*：
    - 长按 *SYS* 键进入系统菜单，选择 *ELRS* Lua 脚本。
    - 进入 *WIFI Connectivity* 选项。
@@ -209,7 +209,7 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
    - 使用电脑或者手机连接遥控器创建的 WiFi 热点，默认名称为 `ExpressLRS TX`，密码为 `expresslrs`。
   - 在浏览器中访问 `http://10.0.0.1`，在网页中输入Bind Phrase 并保存
 
-=== 验证对频成功
+== 验证对频成功
 1. 飞控上电，观察 ELRS LED 状态：
    - *慢闪（500ms 亮/灭）*：等待连接
    - *快闪（25ms 亮/灭）*：WiFi 模式
@@ -223,16 +223,16 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
   + 遥控器与飞控的 ELRS 固件主版本是否一致（建议均为 3.x，例如3.6.2）。
 ]
 
-== 连接和配置
+= 连接和配置
 
-=== 无线配置
+== 无线配置
 
 1. 飞控上电，60 秒后 ELRS 自动开启 WiFi 热点（名称默认为 `ExpressLRS RX`）。
 2. 电脑连接该热点，密码默认为 `expresslrs`。
 3. INAV Configurator 使用 TCP 方式连接，地址为 `10.0.0.1:5761`。
 4. 连接成功后可进行配置。
 
-=== 有线配置（需要USB转TTL）
+== 有线配置（需要USB转TTL）
 
 1. 使用附带的 SH1.0 x 4P 的线连接 USB 转 TTL 到电脑（注意不要连接电池，或者连接电池了不要打开开关）。
 2. INAV Configurator 正常使用串口连接并配置

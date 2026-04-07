@@ -86,14 +86,22 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 == 第二步：硬件连接
 
-本节介绍飞控的电源、电机和串口接线方式。
+本节介绍飞控的两种连接方式。若只需完成基础配置，优先使用无线配置；需要稳定串口、调试或刷写时，再使用 USB-TTL 有线配置。
 
-// 配置步骤先不连接电池，由usb串口提供5V电源。
+=== 方式一：无线配置
 
+1. 飞控上电，60 秒后 ELRS 自动开启 WiFi 热点（名称默认为 `ExpressLRS RX`）。
+2. 电脑连接该热点，密码默认为 `expresslrs`。
+3. INAV Configurator 使用 TCP 方式连接，地址为 `10.0.0.1:5761`。
+4. 连接成功后可进行配置。
 
-=== 串口连接
+=== 方式二：有线配置（需要 USB 转 TTL）
 
 #tip[串口连接仅用于高级配置和调试。如果飞控已预配置且只需完成对频和基础检查，则无需连接串口、可跳过本节。]
+
+使用附带的 SH1.0 x 4P 的线连接 USB 转 TTL 到电脑。有线配置时不要连接电池；如果已经连接电池，也不要打开飞控电源开关。
+
+#caution[电脑检测不到串口时，需要检查是否已经安装 USB 转 TTL 对应的驱动。]
 
 ==== 准备材料
 
@@ -133,10 +141,9 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 #figure(image("assets/inav-config-connect.aggressive-plus.png", width: 90%), caption: [连接界面])
 1. 按上表接好线，将 USB-TTL 模块插入电脑。
-// 2. 给飞控接上 1S 电池，拨动开关上电。
-3. 打开 INAV Configurator，左上角选择正确的串口（如 `COM3` 或 `/dev/ttyUSB0`）。
-4. 波特率保持默认 *115200*，点击 *Connect*。
-5. 连接成功后进入配置界面。
+2. 打开 INAV Configurator，左上角选择正确的串口（如 `COM3` 或 `/dev/ttyUSB0`）。
+3. 波特率保持默认 *115200*，点击 *Connect*。
+4. 连接成功后进入配置界面。
 
 #caution[首次连接配置向导阶段，请勿连接电机！默认配置下，INAV 会激活电调输出，可能导致连接的电机意外转动，造成电脑 USB 端口保护性断开，或造成人身伤害。请在完成输出模式确认后，再连接实际负载。]
 
@@ -339,8 +346,6 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。完成�
 - *PWM1/PWM2（2Pin）*：用于有刷电机。
 - *PWM3/PWM4（3Pin）*：支持有刷电机与舵机接线。
 
-#caution[舵机功能当前固件尚未完成，仅保留硬件兼容性。]
-
 === UART 连接
 - *UART1*：正面SH1.0-4Pin连接器，连接上位机。
 - *ELRS/CRSF串口*：ELRS 通信使用，已连接AT32-UART7和ELRS-UART0，用于 ESP8285/ELRS 烧录。
@@ -348,34 +353,21 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。完成�
 
 == 固件烧录流程
 
-#caution[INAV 固件必须通过 SWD 有线方式烧录，需要使用 *6pin 1.25mm 烧录夹*夹在 PCB 底面的测试点焊盘上。请仔细确认线序后再连接！]
-
-#figure(image("assets/debug-probe.aggressive-plus.jpg", width: 80%), caption: [烧录夹连接示意图])#todo[需要更新]
-
-=== AT32 占位固件
-目的：释放 CRSF/UART7 控制权，方便 ESP8285 串口烧录。
-
-1. 通过 DAP Link 连接 SWDIO / SWCLK / GND / VBAT(5V)。
-2. 下载 `at32-dummy.elf` #todo[下载链接待补充]。
-3. 烧录完成后：
-   - UART7 被配置为数字输入。
-   - 两颗 LED 交替闪烁。
-
 === ESP8285 ELRS 固件
-1. 使用镊子短接 GPIO0 与 GND，使 ESP 进入 Bootloader。
-2. 通过 USB-UART 连接 UART7（ELRS/CRSF）。
-3. UART5（TP18/TP7）为备用串口，通常不用于 ESP8285 烧录。
-4. 复位 ESP（断电重上电或拉低 ESP_NRST）进入下载模式。
-5. 打开 ELRS Configurator，选择与下图一致的配置并选择串口刷写。
-
-#figure(image("assets/elrs-config1.aggressive-plus.jpg", width: 80%), caption: [ELRS Configurator 配置截图 1])
-#figure(image("assets/elrs-config2.aggressive-plus.jpg", width: 80%), caption: [ELRS Configurator 配置截图 2])
+1. 飞控上电，60s内没有遥控器对频成功时，ESP8285 会自动进入 WiFi 模式，创建名为 `ExpressLRS RX` 的热点。
+2. 电脑连接该热点，密码默认为 `expresslrs`。
+3. 浏览器访问10.0.0.1,进入 ELRS Web UI。在网页端上传对应固件即可完成烧录。
 
 === AT32 INAV 固件
-1. 通过 DAP Link 连接 SWDIO / SWCLK / GND / VBAT。
-2. 两种方式：
-  - 本地编译固件（选择目标：`NEUTRONRCF435MINI_FW`）并烧录；或
-  - 下载 `NEUTRONRCF435MINI_FW.elf` #todo[下载链接待补充]。
+1. 使用镊子短接进入烧录模式所需的两个触点后，再给飞控板上电。
+2. 常用有两种操作方式：
+  - *方式一*：保持镊子短接后立即使用 USB 转 TTL 连接电脑，电池不用接。适合电脑连接比较方便的场景。
+  - *方式二*：接好电池，保持镊子短接后立即打开飞控电源开关，再从容使用 USB 转 TTL 连接电脑。此时 *不要* 连接 USB 转 TTL 给飞控板供电的那条线。
+3. 观察上电后的状态：
+  - 正常飞控上电时，板上的两个灯会闪烁。
+  - 如果短接后上电，两个灯仍然闪烁，说明没有正常进入烧录模式，需要断电后重试。
+4. 进入烧录模式后，使用浏览器打开 #link("https://humpbacklab.github.io/AT32-WebISP/")[AT32-WebISP]。
+5. 在网页中选择对应串口和固件文件，按页面提示完成 AT32 MCU 固件烧录。
 
 = 详细技术规范 <specs>
 

@@ -6,12 +6,18 @@
   version: "v1.0",
 )
 
+#set heading(numbering: "1.1")
+#show heading: set block(above: 1.2em, below: 0.6em)
+#show outline.entry: set par(leading: 1.2em)
+
+#let update-date = resolve_update_date()
+
 // 封面
 #cover-page(
   main-title: "LightFin INAV 飞控快速入门指南",
   subtitle: "面向差速固定翼与轻量机型的 1S 一体式飞控解决方案",
   doc-version: "v1.0",
-  update-date: "2026年1月28日",
+  update-date: update-date,
   hardware-info: "适用硬件：LightFin 飞控",
 )
 

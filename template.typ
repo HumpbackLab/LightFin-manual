@@ -1,5 +1,10 @@
 #import "@preview/dashy-todo:0.1.3": todo
 
+#let resolve_update_date(fallback: "2026年1月28日") = sys.inputs.at(
+  "update-date",
+  default: fallback,
+)
+
 // 文档模板函数，接受可配置参数
 #let doc-config(
   header-title: "LightFin INAV 飞控文档",
@@ -38,12 +43,8 @@
   )
 
   // 标题设置
-  set heading(numbering: "1.1 ")
-  show heading: it => {
-    v(1.2em, weak: true)
-    it
-    v(0.6em)
-  }
+  set heading(numbering: "1.1")
+  show heading: set block(above: 1.2em, below: 0.6em)
 
   show outline.entry: set par(leading: 1.2em)
 }

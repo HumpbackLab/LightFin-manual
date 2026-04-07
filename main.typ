@@ -5,11 +5,17 @@
   version: "v1.0",
 )
 
+#set heading(numbering: "1.1")
+#show heading: set block(above: 1.2em, below: 0.6em)
+#show outline.entry: set par(leading: 1.2em)
+
+#let update-date = resolve_update_date()
+
 #cover-page(
   main-title: "LightFin INAV 飞控用户手册",
   subtitle: "面向轻量固定翼与 1S 平台的 INAV 一体式飞控解决方案",
   doc-version: "v1.0",
-  update-date: "2026年1月28日",
+  update-date: update-date,
   hardware-info: "适用硬件：LightFin 飞控（AT32F435mini 硬件平台，INAV 定制固件）",
 )
 
@@ -49,6 +55,13 @@
 // #figure(rotate(180deg, image("assets/pcb-bottom-view.aggressive-plus.jpg", width: 100%)), caption: [PCB 底层布局图])
 
 #figure(image("assets/annotation_02.aggressive-plus.jpg", width: 90%, height: 10cm), caption: [PCB 底层布局图])
+
+== 正方向
+
+安装飞控时，应以板上方向标识为准，确保飞控前向与机体前向一致，并尽量保持安装面水平。
+
+#figure(image("assets/pcb-bottom-view-with-arrow.png", width: 90%), caption: [飞控方向标识])
+
 == 指示灯与按键
 - *LED 状态灯*：板载 3 颗状态灯，其中 2 颗由 MCU 控制、1 颗由 ESP（ELRS_LED）控制。
 - *电源/功能按键*：板载滑动开关，用于电源控制。

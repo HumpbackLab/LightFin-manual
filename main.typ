@@ -225,15 +225,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 == 第四步：接收机与链路检查
 
-LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器建立链路后才能完成接收机测试。
-
-=== 对频前准备
-- 确保遥控器已安装 ELRS 发射模块并刷入对应固件。
-- 遥控器和飞控的 ELRS 固件版本应匹配（建议均使用 3.x 版本）。
-
-=== 密码对频
-
-建议使用 *密码对频*（Binding Phrase）方式，无需手动触发对频模式，只需确保遥控器与飞控使用相同的对频密码即可自动连接。
+LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。完成对频后，再进入 INAV Configurator 检查 Receiver 页面响应。
 
 #block(
   fill: rgb("#fff8e1"),
@@ -242,33 +234,30 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器建立链路后�
   radius: 4pt,
   width: 100%,
 )[
-  *出厂对频密码*：`123456`
-
   请在遥控器端设置相同的对频密码，飞控上电后将自动连接。连接成功后，遥控器应发出提示，同时 ELRS 指示灯应由慢闪变为常亮。
 ]
 
-==== 在遥控器上设置对频密码
+=== 在遥控器上设置对频密码
 
-*通过 Lua 脚本使高频头进入 WIFI 模式设置*：
-  - 长按 *SYS* 键进入系统菜单，选择 *ELRS* Lua 脚本。
-  - 进入 *WIFI Connectivity* 选项。
-  - 选择 *Enable WIFI*。
-  - 使用电脑或者手机连接遥控器创建的 WiFi 热点，默认名称为 `ExpressLRS TX`，密码为 `expresslrs`。
-  - 在浏览器中访问 `http://10.0.0.1`，在网页中输入 Bind Phrase 并保存。
+*通过 Lua 脚本使高频头进入WIFI模式 设置*：
+   - 长按 *SYS* 键进入系统菜单，选择 *ELRS* Lua 脚本。
+   - 进入 *WIFI Connectivity* 选项。
+   - 选择 *Enable WIFI*
+   - 使用电脑或者手机连接遥控器创建的 WiFi 热点，默认名称为 `ExpressLRS TX`，密码为 `expresslrs`。
+  - 在浏览器中访问 `http://10.0.0.1`，在网页中输入Bind Phrase 并保存
 
-==== 验证对频成功
+=== 验证对频成功
 1. 飞控上电，观察 ELRS LED 状态：
    - *慢闪（500ms 亮/灭）*：等待连接
    - *快闪（25ms 亮/灭）*：WiFi 模式
-   - *常亮*：已连接或处于烧录模式
+   - *常亮*：已连接
    - 官方说明：#link("https://www.expresslrs.org/quick-start/led-status/#receivertransmitter-led-status")[ExpressLRS LED Status]
 2. 打开遥控器，等待数秒，LED 应变为常亮。
-3. 连接 INAV Configurator，进入 *Receiver* 页面，拨动遥控器摇杆确认响应正常。
 
 #tip[
   如果对频失败，依次检查：
   + 遥控器与飞控的对频密码（Binding Phrase）是否完全一致（区分大小写）；
-  + 遥控器与飞控的 ELRS 固件主版本是否一致（建议均为 3.x，例如 3.6.2）。
+  + 遥控器与飞控的 ELRS 固件主版本是否一致（建议均为 3.x，例如3.6.2）。
 ]
 
 === 通过 WiFi 更新 ELRS 固件
@@ -456,7 +445,7 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器建立链路后�
 
 *Q: 遥控器无法与飞控对频*
 - 确认双方 ELRS 固件版本一致（建议均为 3.x）。
-- 确认对频密码（Binding Phrase）一致，出厂默认为 `123456`。
+- 确认对频密码（Binding Phrase）一致。
 - 尝试通过 WiFi 进入 ELRS Web UI 检查接收机状态。
 
 *Q: 对频成功但 Receiver 页面无响应*

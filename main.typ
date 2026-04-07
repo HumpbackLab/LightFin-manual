@@ -7,7 +7,7 @@
 
 #cover-page(
   main-title: "LightFin INAV 飞控用户手册",
-  subtitle: "面向差速固定翼与轻量机型的 1S 一体式飞控解决方案",
+  subtitle: "面向轻量固定翼与 1S 平台的 INAV 一体式飞控解决方案",
   doc-version: "v1.0",
   update-date: "2026年1月28日",
   hardware-info: "适用硬件：LightFin 飞控（AT32F435mini 硬件平台，INAV 定制固件）",
@@ -18,7 +18,7 @@
 *LightFin* 是由 *座头鲸工作室 / HumpbackLab* 推出的轻量化固定翼飞控产品。
 
 == 核心定位与适用机型
-*LightFin*（硬件平台：AT32F435mini）是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435* 主控与 *ELRS*（ExpressLRS，开源低延迟射频协议）链路，适用于 1S 供电的轻量机型，尤其适合 *差速控制的无襟翼固定翼*（如纸飞机改装）。板载传感器覆盖 IMU（惯性测量单元）、气压计与磁力计，满足稳定飞行与高度/航向估计的基础需求。
+*LightFin*（硬件平台：AT32F435mini）是一款面向 *INAV* 固件的超小型飞控，集成 *AT32F435* 主控与 *ELRS*（ExpressLRS，开源低延迟射频协议）链路，适用于 1S 供电的轻量固定翼与实验平台。板载传感器覆盖 IMU（惯性测量单元）、气压计与磁力计，满足基础姿态稳定、航向估计与高度感知需求。
 
 == 核心硬件特性
 #table(
@@ -37,7 +37,7 @@
 )
 
 == 使用场景与优势
-- *差速固定翼*：双电机差速控制转向与俯仰，适合无襟翼/无舵面设计。
+- *轻量固定翼平台*：适合体积和重量受限的 1S 固定翼平台。
 - *1S 轻量平台*：板载电源方案适配 1S LiPo，结构紧凑，减少外部模块。
 - *ELRS 一体化*：无需外接接收机，降低布线与重量。
 
@@ -60,7 +60,7 @@
 
 = 快速上手 <getting-started>
 
-本章面向拿到成品 LightFin 飞控的普通用户，帮助你快速完成连接、配置和起飞。LightFin 飞控已出厂预装 INAV 和 ELRS 固件，可直接按本章操作。
+本章面向拿到成品 LightFin 飞控的普通用户，帮助你完成首次连接、基础配置与功能检查。LightFin 飞控已出厂预装 INAV 和 ELRS 固件，可直接按本章操作。
 
 #block(
   fill: rgb("#e8f5e9"),
@@ -69,11 +69,9 @@
   radius: 4pt,
   width: 100%,
 )[
-  *最快起飞路径*：如果飞控已由卖家预配置好机型参数，你只需完成以下步骤即可首飞：
-  + *装机和对频*（第五步）：将电池和电机连接到飞控，让遥控器与飞控建立连接
-  + *首飞检查*（第六步）：确认一切正常后起飞
+  *首次使用最短路径*：如果飞控已由卖家预置好参数，你只需完成供电接线、ELRS 对频和接收机响应检查即可开始装机。
 
-  只有当你需要调整参数、排查问题或首次配置机型时，才需要连接电脑使用 INAV Configurator。
+  只有在需要校准传感器、修改输出配置、检查链路或重新刷写固件时，才需要连接电脑使用 INAV Configurator。
 ]
 
 == 第一步：安装 INAV Configurator
@@ -95,7 +93,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 === 串口连接
 
-#tip[串口连接仅用于高级配置和调试。如果飞控已预配置且只需对频后直接飞行，则无需连接串口、可跳过本节。]
+#tip[串口连接仅用于高级配置和调试。如果飞控已预配置且只需完成对频和基础检查，则无需连接串口、可跳过本节。]
 
 ==== 准备材料
 
@@ -110,8 +108,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
   [#image("assets/sh1.0-to-2.54.aggressive-plus.jpg", width: 80%)],
   [#image("assets/battery.aggressive-plus.jpg", width: 80%)],
   [3.3V 电平 USB 串口模块], [SH1.0-4Pin 转杜邦线], [1S 锂电池], 
-
-)#todo[A4纸/折纸教程？]
+)
 
 ==== 接线方式
 飞控正面的 *UART1 接口*（SH1.0-4Pin）用于连接上位机：
@@ -141,7 +138,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 4. 波特率保持默认 *115200*，点击 *Connect*。
 5. 连接成功后进入配置界面。
 
-#caution[首次连接配置向导阶段，请勿连接电机！默认配置下，INAV 会激活电调输出，可能导致连接的电机意外转动，造成电脑 USB 端口保护性断开，或造成人身伤害。请务必在电机配置完成后，在第四步再连接电机。]
+#caution[首次连接配置向导阶段，请勿连接电机！默认配置下，INAV 会激活电调输出，可能导致连接的电机意外转动，造成电脑 USB 端口保护性断开，或造成人身伤害。请在完成输出模式确认后，再连接实际负载。]
 
 
 == 第三步：首次连接配置向导
@@ -152,7 +149,7 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 在配置向导中：
 1. *Platform type*: 选择 *Airplane*
-2. *Mixer preset*: 选择 *Airplane without a tail (Wing, Delta, etc)*
+2. *Mixer preset*: 根据实际机型选择对应预设；若仅做基础联机测试，可先保持默认，后续再按机型调整。
 
 #figure(image("assets/inav-config-receiver-wizard.aggressive-plus.jpg", width: 80%), caption: [INAV Configurator 首次连接配置向导 - 接收机配置])
 
@@ -191,19 +188,19 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 磁力计校准完成后，所有校准任务即告一段落。此时，请务必点击右下角的 "Save and Reboot" 按钮，保存您的设置并让飞控重新启动，使新的校准数据生效。
 
-飞控重启后，返回 Status 页面。此时您会看到 "Pre-arming checks" 列表已经全部变为绿色。这表示所有飞行前的安全检查均已通过，飞机已准备好解锁（ARM）并进行飞行。
+飞控重启后，返回 Status 页面。此时应重点确认传感器状态正常、姿态显示合理，且 "Pre-arming checks" 中没有阻止解锁的关键错误。
 
 #figure(image("assets/inav-prearm-green.aggressive-plus.jpg", width: 90%), caption: [解锁检查通过])
 
-=== 预配置电机模式
+=== 配置输出模式
 
-在连接物理电机到飞控之前，需要修改INAV的默认电机设置，避免默认配置下电机意外转动，造成潜在的危险或设备损坏。
+在连接物理负载之前，建议先检查 INAV 的输出模式，避免默认配置与实际硬件不匹配，造成意外转动或输出异常。
 
 #caution[
   在完成本节配置前，请勿连接电机。
 ]
 
-按以下步骤将默认输出模式改为有刷电机（BRUSHED）：
+若你的 LightFin 接的是有刷电机，请按以下步骤将输出模式改为 *BRUSHED*：
 
 1. 连接飞控并进入 INAV Configurator。
 2. 左侧导航栏进入 *Outputs* 页面（如下图）。
@@ -226,145 +223,9 @@ INAV Configurator 是配置飞控的上位机软件，支持 Windows、macOS 和
 
 5. 点击右下角 *Save and Reboot* 保存并重启。重启完成后重新连接，确认设置已生效。
 
-== 第四步：配置差速纸飞机
+== 第四步：接收机与链路检查
 
-差速纸飞机使用左右两个电机的转速差实现转向，无需舵面。请继续进行下面的配置和测试步骤。
-
-=== 连接电源和电机
-
-在配置输出前，需要先连接两路电机到飞控PWM输出接口，并连接电池供电。为了连接INAV Configurator，仍然需要连接USB-TTL串口。
-
-飞控使用 1S 锂电池供电，通过 *MX1.25-2Pin* 接口连接：
-
-#table(
-  columns: (1fr, 1fr, 2fr),
-  inset: 8pt,
-  align: horizon + center,
-
-  [*接口引脚*], [*连接到*], [*说明*],
-  [Pin 1 (VIN)], [电池正极], [1S 锂电池（3.0V-4.2V）],
-  [Pin 2 (GND)], [电池负极], [电源地],
-)
-
-飞控提供 4 路 PWM 输出，其中 *PWM1/PWM2* 用于差速纸飞机的左右电机：
-
-#table(
-  columns: (1fr, 1.5fr, 2fr),
-  inset: 8pt,
-  align: horizon + center,
-
-  [*接口*], [*引脚定义*], [*连接说明*],
-  [U14 (PWM1)], [Pin1: PWM1, Pin2: VBAT], [左电机：正极接 Pin1，负极接 Pin2],
-  [U15 (PWM2)], [Pin1: VBAT, Pin2: PWM2], [右电机：正极接 Pin1，负极接 Pin2],
-)
-
-#caution[
-  在进行任何电机测试、接线或配置操作时，请务必 *不要连接螺旋桨*。
-]
-
-飞控正面的 *UART1 接口*（SH1.0-4Pin）用于连接上位机。飞控供电已由电池提供，请*悬空*VBAT电源线：
-
-#table(
-  columns: (1fr, 1fr, 2fr),
-  inset: 8pt,
-  align: horizon + center,
-
-  [*飞控引脚*], [*连接到*], [*说明*],
-  [Pin 1 (VBAT)], [*悬空*], [飞控电源],
-  [Pin 2 (GND)], [串口模块 GND], [电源地],
-  [Pin 3 (RX)], [串口模块 TX], [飞控接收 ← 电脑发送],
-  [Pin 4 (TX)], [串口模块 RX], [飞控发送 → 电脑接收],
-)
-
-下图给出了电机、电池与 USB-TTL 串口的同时连接方式，供接线核对：
-#figure(image("assets/annotation_04.aggressive-plus.jpg", width: 90%, height: 8.2cm), caption: [电机、电池及USB串口模块连接示意图])
-
-连接主电池供电，将飞控背面的开关拨动到 ON 位置，此时几个指示灯应亮起。
-
-=== 测试电机
-
-#figure(
-  image("assets/inav-outputs-motor-enable-control.aggressive-plus.jpg", width: 90%),
-  caption: [Motor 菜单启用电机控制]
-)
-// 确保螺旋桨未连接，然后将左侧的三个滑块（分别对应Motor1，Motor2和两者同时）调整少许，当电机控制值大于 5% 时电机应转动，验证飞控动力部分工作正常。
-// 低速下用手接触电机转轴感受其转动方向，两个电机转动方向应相反。若电机正反转颠倒，可直接交换电机两根线。
-
-=== 配置 Mixer 混控（差速）
-
-差速纸飞机通常不需要舵面（Servo），只需配置两路电机（Motor）的混控即可。
-
-1. 进入 *Mixer* 页面，确认当前为默认状态（如下图）。
-
-#figure(
-  image("assets/inav-mixer-page-default.aggressive-plus.jpg", width: 90%),
-  caption: [Mixer 页面默认状态]
-)
-
-2. 在 *Mixer preset* 中选择 *Flying Wing with differential thrust*，点击 *Load mixer*。
-
-#figure(
-  image("assets/inav-mixer-preset-differential-thrust.aggressive-plus.png", width: 90%),
-  caption: [选择差速混控预设]
-)
-
-3. 在下方 *Servo Mixer* 区域，逐条 *Delete* 删除所有舵机输出项。
-
-#figure(
-  image("assets/inav-mixer-delete-servo-mixers.aggressive-plus.jpg", width: 90%),
-  caption: [删除 Servo Mixer 项]
-)
-
-4. 在 *Motor Mixer* 区域，按下表填写两路电机的 Roll/Yaw 混控系数。
-
-#table(
-  columns: (1fr, 2fr, 2fr),
-  inset: 8pt,
-  align: horizon + center,
-
-  [*输出通道*], [*功能*], [*混控设置*],
-  [Motor 1], [左电机], [Throttle 1, Roll -0.1, Yaw -0.1],
-  [Motor 2], [右电机], [Throttle 1, Roll +0.1, Yaw +0.1],
-)#todo[核实实际推荐配置]
-
-#figure(
-  image("assets/inav-mixer-motor-roll-settings.aggressive-plus.png", width: 90%),
-  caption: [Motor Mixer 参数设置]
-)
-
-5. 点击右下角 *Save and Reboot* 保存并重启。
-
-#tip[Yaw 的正负号决定转向方向。如果飞机转向相反，交换两个电机的 Yaw 符号即可。]
-
-=== 设置解锁开关#todo[核实步骤]
-+ 进入 *Modes* 页面。
-+ 找到 *ARM* 模式，点击 *Add Range*。
-+ 选择遥控器上的一个开关通道（如 CH 5），设置触发范围（如 1800-2100）。
-  - 请先在遥控器上配置好通道映射，确保在Receiver页面可以看到通道数值符合预期。
-+ 保存设置。
-
-#figure(
-  image("assets/inav-modes-arm-range.aggressive-plus.jpg", width: 90%),
-  caption: [ARM 模式范围]
-)
-
-== 第五步：最终连接和遥控器配置
-
-在连接遥控器（对频）之前，请先将电池和电机如下图连接到飞控，但无需连接 USB 串口线。
-
-#figure(
-  block(
-  trimmed-image(
-    "assets/annotation_07.aggressive-plus.jpg", trim: (
-    left: 17%, right: 25%, top: 18%, bottom: 10%
-      )
-    ),
-    width: 60%
-  ),
-  caption: [飞控最终连线图]
-)
-
-LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
+LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器建立链路后才能完成接收机测试。
 
 === 对频前准备
 - 确保遥控器已安装 ELRS 发射模块并刷入对应固件。
@@ -383,17 +244,17 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 )[
   *出厂对频密码*：`123456`
 
-  请在遥控器端设置相同的对频密码，飞控上电后将自动连接。连接成功后，遥控器应发出提示，同时ELRS指示灯应由慢闪变为常亮。
+  请在遥控器端设置相同的对频密码，飞控上电后将自动连接。连接成功后，遥控器应发出提示，同时 ELRS 指示灯应由慢闪变为常亮。
 ]
 
-==== 在遥控器上设置对频密码 
+==== 在遥控器上设置对频密码
 
-*通过 Lua 脚本使高频头进入WIFI模式 设置*：
-   - 长按 *SYS* 键进入系统菜单，选择 *ELRS* Lua 脚本。
-   - 进入 *WIFI Connectivity* 选项。
-   - 选择 *Enable WIFI*
-   - 使用电脑或者手机连接遥控器创建的 WiFi 热点，默认名称为 `ExpressLRS TX`，密码为 `expresslrs`。
-  - 在浏览器中访问 `http://10.0.0.1`，在网页中输入Bind Phrase 并保存
+*通过 Lua 脚本使高频头进入 WIFI 模式设置*：
+  - 长按 *SYS* 键进入系统菜单，选择 *ELRS* Lua 脚本。
+  - 进入 *WIFI Connectivity* 选项。
+  - 选择 *Enable WIFI*。
+  - 使用电脑或者手机连接遥控器创建的 WiFi 热点，默认名称为 `ExpressLRS TX`，密码为 `expresslrs`。
+  - 在浏览器中访问 `http://10.0.0.1`，在网页中输入 Bind Phrase 并保存。
 
 ==== 验证对频成功
 1. 飞控上电，观察 ELRS LED 状态：
@@ -407,7 +268,7 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 #tip[
   如果对频失败，依次检查：
   + 遥控器与飞控的对频密码（Binding Phrase）是否完全一致（区分大小写）；
-  + 遥控器与飞控的 ELRS 固件主版本是否一致（建议均为 3.x，例如3.6.2）。
+  + 遥控器与飞控的 ELRS 固件主版本是否一致（建议均为 3.x，例如 3.6.2）。
 ]
 
 === 通过 WiFi 更新 ELRS 固件
@@ -418,9 +279,34 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 3. 浏览器访问 `http://10.0.0.1`，进入 ELRS Web UI。
 4. 上传新固件（`.bin` 文件），等待重启更新完成。
 
-#caution[WiFi 更新仅适用于 ELRS 固件。INAV 固件需通过 SWD 有线烧录（参见后续"固件烧录流程"章节）。]
+#caution[WiFi 更新仅适用于 ELRS 固件。INAV 固件需通过 SWD 有线烧录（参见后续“固件烧录流程”章节）。]
 
-== 第六步：首飞检查清单
+== 第五步：功能与安全检查
+
+=== 设置解锁开关
++ 进入 *Modes* 页面。
++ 找到 *ARM* 模式，点击 *Add Range*。
++ 选择遥控器上的一个开关通道（如 CH 5），设置触发范围（如 1800-2100）。
+  - 请先在遥控器上配置好通道映射，确保在Receiver页面可以看到通道数值符合预期。
++ 保存设置。
+
+#figure(
+  image("assets/inav-modes-arm-range.aggressive-plus.jpg", width: 90%),
+  caption: [ARM 模式范围]
+)
+
+=== 输出与传感器检查
+
+#figure(
+  image("assets/inav-outputs-motor-enable-control.aggressive-plus.jpg", width: 90%),
+  caption: [Outputs 页面启用输出控制]
+)
+
+#caution[
+  进行任何输出测试前，请先断开螺旋桨或其他危险负载，并确保机体不会因电机转动造成人身伤害。
+]
+
+建议在交付装机前至少完成以下检查：
 
 #table(
   columns: (auto, 1fr),
@@ -429,14 +315,12 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 
   [☐], [加速度计已校准，飞控水平放置时 Setup 页面显示水平],
   [☐], [遥控器已对频，Receiver 页面摇杆响应正常],
-  [☐], [电机方向正确（推力向后）],
+  [☐], [输出模式与实际硬件一致（如有刷电机已设置为 BRUSHED）],
+  [☐], [Outputs 页面可正确识别并驱动对应输出通道],
   [☐], [ARM 开关已设置，可正常解锁/上锁],
   [☐], [电池电压正常，飞控供电稳定],
-  [☐], [螺旋桨安装牢固，方向正确],
-  [☐], [重心位置合适，飞机平衡],
+  [☐], [Status 页面无阻止解锁的关键错误],
 )
-
-完成以上检查后，找一片开阔场地，手掷起飞，享受飞行！
 
 #pagebreak()
 
@@ -453,9 +337,9 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 == 关键接口连接
 #figure(image("assets/annotation_01.aggressive-plus.jpg", width: 100%), caption: [PCB正面接线示意图])
 
-=== 机体安装与方向
-- 飞控应安装在机体重心附近，尽量保持水平。
-- 以 PCB 丝印方向标识为准，确保机头方向与飞控坐标一致。
+=== 安装方向要求
+- 以 PCB 丝印方向标识为准，确保飞控坐标与机体前向一致。
+- 飞控安装面应尽量保持水平，避免明显倾斜。
 - 建议使用泡棉或软胶减震固定，避免高频震动干扰 IMU。
 
 === 电源输入（MX1.25-2Pin）
@@ -673,7 +557,7 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 
 *Q: 电机转向错误*
 - 对于有刷电机，交换电机两根线即可反转。
-- 在 Outputs 页面调整混控中的正负号。
+- 重新确认输出通道映射与接线关系是否一致。
 
 == 传感器问题
 
@@ -685,29 +569,6 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
 *Q: 磁力计/气压计显示红色*
 - 检查传感器是否受到干扰（远离强磁场、避免阳光直射气压计）。
 - 部分情况下传感器需要预热，等待数秒后重新检查。
-
-= 产品规格汇总 <specs-summary>
-
-#table(
-  columns: (1fr, 2fr),
-  inset: 10pt,
-  align: horizon,
-
-  [*项目*], [*规格*],
-  [PCB 尺寸], [30.2 mm × 14.6 mm],
-  [PCB 层数], [4 层],
-  [板厚], [0.8 mm],
-  [安装孔], [4 × M2],
-  [工作电压], [3.0V - 4.2V（1S 锂电池）],
-  [最大输入电压], [5.7V],
-  [主控 MCU], [AT32F435CGU7（QFN48）],
-  [无线链路], [ESP8285 + SX1280（ELRS 2.4GHz）],
-  [IMU], [LSM6DSOWTR（SPI1）],
-  [磁力计], [QMC5883P（I2C2, 0x2C）],
-  [气压计], [SPL06-001（I2C2, 0x77）],
-  [电机输出], [4 路 PWM（2 × 2Pin + 2 × 3Pin）],
-  [串口], [UART1（上位机）/ UART7（ELRS 内部）],
-)
 
 = 术语表 <glossary>
 
@@ -724,7 +585,6 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。
   [CLI], [Command Line Interface，命令行界面，用于高级配置和调试。],
   [SWD], [Serial Wire Debug，ARM 处理器的调试/烧录接口。],
   [IMU], [Inertial Measurement Unit，惯性测量单元，包含加速度计和陀螺仪。],
-  [差速控制], [通过左右电机转速差实现转向的控制方式，无需舵面。],
   [对频], [Binding，遥控器发射机与接收机建立配对关系的过程。],
   [解锁/ARM], [使飞控进入可飞行状态，电机响应油门输入。],
 )

@@ -390,22 +390,6 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器建立链路后�
 
 = 详细技术规范 <specs>
 
-== 电源树
-#table(
-  columns: (1.2fr, 2fr, 2.2fr),
-  inset: 8pt,
-  align: horizon + center,
-
-  [*节点*], [*路径*], [*电压/备注*],
-
-  [VIN], [电池输入], [1S 锂电池，额定最大值 5.7V],
-  [VBAT], [TPS22975 负载开关输出], [开关控制，供电机与系统],
-  [VCC], [TPS63001 Buck-Boost 输出], [系统主电源3.3V],
-  [VDDR], [SX1280 射频电源], [局部去耦供电，未外部引出],
-)
-
-- *电压采样*：ADC_VBAT 连接电池电压分压，用于 INAV 电池监测。#todo[分压系数设置？]
-
 == 传感器与总线地址
 #table(
   columns: (1.3fr, 1.6fr, 1.2fr, 1.4fr),
@@ -433,30 +417,6 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器建立链路后�
   [UART7], [ELRS/CRSF 内部链路], [板载 ELRS 使用，兼作 ESP8285 烧录],
 )
 
-=== 电源输入（U13，ZX-MX1.25-2PWT）
-#table(
-  columns: (1fr, 1.2fr, 2fr),
-  inset: 8pt,
-  align: horizon + center,
-
-  [*Pin*], [*Net*], [*说明*],
-  [1], [VIN], [电池正极输入],
-  [2], [GND], [电池负极],
-)
-
-=== 有刷电机输出（U14/U15，2pin）
-#table(
-  columns: (1fr, 1.2fr, 2fr),
-  inset: 8pt,
-  align: horizon + center,
-
-  [*接口*], [*Pin*], [*Net / 说明*],
-  [U14], [1], [PWM1（电机控制）],
-  [U14], [2], [VBAT（电机正极）],
-  [U15], [1], [VBAT（电机正极）],
-  [U15], [2], [PWM2（电机控制）],
-)
-
 === 三针动力/舵机接口（CN1/CN2，HC-1.25-3PWT）
 #table(
   columns: (1fr, 1fr, 1.2fr, 2fr),
@@ -470,50 +430,6 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器建立链路后�
   [CN2], [1], [PWM4], [信号输出（电机/舵机）],
   [CN2], [2], [VBAT], [电源正极],
   [CN2], [3], [GND], [电源地],
-)
-
-#caution[舵机固件功能未完成，仅保留硬件兼容，请勿在当前固件中启用舵机控制。]
-
-=== UART1（MSP/CLI，U12，ZX-SH1.0-4PWT）
-#table(
-  columns: (1fr, 1.2fr, 2fr),
-  inset: 8pt,
-  align: horizon + center,
-
-  [*Pin*], [*Net*], [*说明*],
-  [1], [VBAT], [供电输出（1S）],
-  [2], [GND], [地],
-  [3], [UART1_RX], [MSP/CLI 接收],
-  [4], [UART1_TX], [MSP/CLI 发送],
-)
-
-#tip[UART1 接口旁的固定焊盘为 PWM4 网络，避免短路/误触。]
-#tip[UART1 引出的是 VBAT（1S）电源，需连接串口 5V 电源。但TX/RX必须为 3.3V TTL逻辑电平。]
-
-=== 调试/烧录测试点（TP）
-#table(
-  columns: (1fr, 1.6fr, 2fr),
-  inset: 8pt,
-  align: horizon + center,
-
-  [*测试点*], [*Net*], [*用途*],
-  [TP3], [SWCLK], [AT32 SWD 时钟],
-  [TP4], [SWDIO], [AT32 SWD 数据],
-  [TP1/TP9], [GND], [SWD 参考地],
-  [TP8], [VBAT], [目标供电],
-)
-
-=== 备用串口测试点（UART5）
-#table(
-  columns: (1fr, 1.6fr, 2fr),
-  inset: 8pt,
-  align: horizon + center,
-
-  [*测试点*], [*Net*], [*说明*],
-  [TP18], [UART5_TX], [备用串口发送],
-  [TP7], [UART5_RX], [备用串口接收],
-  [TP15], [GPIO0], [Bootloader 拉低进入烧录],
-  [TP1/TP9], [GND], [参考地],
 )
 
 = 调试建议与注意事项 <debug>

@@ -23,6 +23,8 @@ jobs:
           tag="build-${build_date}-${GITHUB_RUN_NUMBER}"
           main_pdf_name="lightfin-manual-${build_date}.pdf"
           main_html_name="lightfin-manual-${build_date}.html"
+          main_en_pdf_name="lightfin-manual-en-${build_date}.pdf"
+          main_en_html_name="lightfin-manual-en-${build_date}.html"
           tutorial_pdf_name="lightfin-quick-tutorial-${build_date}.pdf"
           tutorial_html_name="lightfin-quick-tutorial-${build_date}.html"
           echo "commit_update_date=${commit_update_date}" >> "$GITHUB_ENV"
@@ -30,6 +32,8 @@ jobs:
           echo "release_tag=${tag}" >> "$GITHUB_ENV"
           echo "main_pdf_name=${main_pdf_name}" >> "$GITHUB_ENV"
           echo "main_html_name=${main_html_name}" >> "$GITHUB_ENV"
+          echo "main_en_pdf_name=${main_en_pdf_name}" >> "$GITHUB_ENV"
+          echo "main_en_html_name=${main_en_html_name}" >> "$GITHUB_ENV"
           echo "tutorial_pdf_name=${tutorial_pdf_name}" >> "$GITHUB_ENV"
           echo "tutorial_html_name=${tutorial_html_name}" >> "$GITHUB_ENV"
 
@@ -43,6 +47,12 @@ jobs:
 
       - name: Compile main HTML
         run: typst compile --input update-date="${{ env.commit_update_date }}" --features html --format html main.typ "${{ env.main_html_name }}"
+
+      - name: Compile English main PDF
+        run: typst compile --input update-date="${{ env.commit_update_date }}" main-en.typ "${{ env.main_en_pdf_name }}"
+
+      - name: Compile English main HTML
+        run: typst compile --input update-date="${{ env.commit_update_date }}" --features html --format html main-en.typ "${{ env.main_en_html_name }}"
 
       - name: Compile tutorial PDF
         run: typst compile --input update-date="${{ env.commit_update_date }}" quick-tutorial.typ "${{ env.tutorial_pdf_name }}"
@@ -65,5 +75,7 @@ jobs:
           files: |
             ${{ env.main_pdf_name }}
             ${{ env.main_html_name }}
+            ${{ env.main_en_pdf_name }}
+            ${{ env.main_en_html_name }}
             ${{ env.tutorial_pdf_name }}
             ${{ env.tutorial_html_name }}

@@ -2,7 +2,7 @@
 
 #doc-config(
   header-title: "LightFin INAV Flight Controller User Manual",
-  version: "v1.0",
+  version: "v1.1",
 )
 
 #set text(lang: "en", region: "us")
@@ -16,7 +16,7 @@
       #grid(
         columns: (1fr, 1fr),
         [LightFin INAV Flight Controller User Manual],
-        align(right)[Version: v1.0]
+        align(right)[Version: v1.1]
       )
       #v(-0.5em)
       #line(length: 100%, stroke: 0.5pt + gray)
@@ -32,7 +32,7 @@
 #cover-page(
   main-title: "LightFin INAV Flight Controller User Manual",
   subtitle: "An all-in-one INAV flight controller solution for lightweight fixed-wing and 1S platforms",
-  doc-version: "v1.0",
+  doc-version: "v1.1",
   update-date: update-date,
   hardware-info: "Applicable hardware: LightFin Flight Controller (AT32F435mini hardware platform, custom INAV firmware)",
 )
@@ -392,6 +392,22 @@ This chapter is intended for users who need to reflash firmware or perform deepe
   - If the two LEDs still blink after power-up with the pads shorted, the board did not enter flashing mode correctly. Power off and try again.
 4. Once the board is in flashing mode, open #link("https://humpbacklab.github.io/AT32-WebISP/")[AT32-WebISP] in a browser.
 5. Select the correct serial port and firmware file in the web tool, then follow the prompts to flash the AT32 MCU firmware.
+
+= Using an External Blackbox
+LightFin supports connecting an external blackbox (such as #link("https://humpbacklab.com/humplog.html")[HumpLog]/OpenLog) via the UART1 connector or UART5 (requires soldering) for flight data logging.
+Configuration steps:
+
+1. Connect the blackbox to UART1 or UART5, making sure TX and RX are crossed.
+2. In INAV Configurator, go to the *Ports* page, enable the *Blackbox* function on the corresponding UART, and set the baud rate correctly. *Note: INAV requires one UART to be reserved for MSP configuration. If UART1 is used for the blackbox, MSP must be moved to another UART (such as UART5), and the wiring must be correct.* (Tip: UART5 requires soldering. If you do not need CLI commands, you can use wireless configuration instead.)
+#figure(image("assets/blackbox_port.png", width: 90%), caption: [Blackbox port configuration example])
+3. The OpenLog/#link("https://humpbacklab.com/humplog.html")[HumpLog] blackbox must be set to the matching baud rate (e.g., 115200). To set this, edit the `Config.txt` file on the SD card and configure the baud rate there.
+
+4. Configure the blackbox parameters (such as logging rate and the data fields to record), then save and reboot the flight controller. *Note: INAV currently supports a maximum blackbox baud rate of 250000, which gives a theoretical data throughput of 250000/8 = 31 KB/s. An excessively high logging rate or too many data fields may cause data loss, resulting in incomplete logs that cannot be played back correctly.*
+#figure(image("assets/blackbox_config.png", width: 90%), caption: [Blackbox configuration example])
+5. Logging rate calculation:
+(1/1) = 2000 Hz, (1/2) = 1000 Hz, (1/4) = 500 Hz, and so on.
+
+6. The original OpenLog cannot sustain high data rates. If you need high-rate blackbox logging, #link("https://humpbacklab.com/humplog.html")[HumpLog] is recommended.
 
 = Detailed Technical Specifications <specs>
 

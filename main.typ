@@ -2,7 +2,7 @@
 
 #doc-config(
   header-title: "LightFin INAV 飞控用户手册",
-  version: "v1.0",
+  version: "v1.1",
 )
 
 #set heading(numbering: "1.1")
@@ -14,7 +14,7 @@
 #cover-page(
   main-title: "LightFin INAV 飞控用户手册",
   subtitle: "面向轻量固定翼与 1S 平台的 INAV 一体式飞控解决方案",
-  doc-version: "v1.0",
+  doc-version: "v1.1",
   update-date: update-date,
   hardware-info: "适用硬件：LightFin 飞控（AT32F435mini 硬件平台，INAV 定制固件）",
 )
@@ -381,6 +381,23 @@ LightFin 飞控板载 ELRS 接收机，需要与 ELRS 遥控器对频。完成�
   - 如果短接后上电，两个灯仍然闪烁，说明没有正常进入烧录模式，需要断电后重试。
 4. 进入烧录模式后，使用浏览器打开 #link("https://humpbacklab.github.io/AT32-WebISP/")[AT32-WebISP]。
 5. 在网页中选择对应串口和固件文件，按页面提示完成 AT32 MCU 固件烧录。
+
+= 使用外置黑匣子
+LightFin 飞控支持通过 UART1 接口(连接器) 或者 UART5(额外焊线) 连接外置黑匣子（如 #link("https://humpbacklab.com/humplog.html")[HumpLog]/OpenLog），实现飞行数据记录功能。
+配置方式如下：
+
+1. 连接黑匣子到 UART1 或 UART5，确保 TX/RX 交叉连接。
+2. 在 INAV Configurator 的 *Ports* 页面，启用对应 UART 的 *Blackbox* 功能，并正确设置波特率。*注意INAV需要保留一个串口用于连接MSP配置，因此如果将
+UART1用于黑匣子，则需要将MSP配置切换到其他串口（如UART5），并确保连接方式正确。*(Tips: UART5 需要焊线连接，如果不需要使用CLI命令，可以使用无线的方式来配置飞控）
+#figure(image("assets/blackbox_port.png", width: 90%), caption: [Blackbox 端口配置示例])
+3. OpenLog/#link("https://humpbacklab.com/humplog.html")[HumpLog]黑匣子需要设置为对应的波特率（如 115200）。设置方式：编辑SD卡的Config.txt，在其中设置波特率。
+
+3. 配置黑匣子参数（如日志频率、希望存入黑匣子的数据），保存并重启飞控。*注意：当前INAV最高仅支持250000波特率的黑匣子数据保存，也即理论的数据吞吐率为：250000/8 = 31KB/s, 日志频率过高或者记录的数据过多可能会导致数据丢失，造成日志不完整，无法正确回放。*
+#figure(image("assets/blackbox_config.png", width: 90%), caption: [Blackbox 配置示例])
+4. 日志频率计算
+(1/1) 为 2000Hz，(1/2) 为 1000Hz，(1/4) 为 500Hz... 以此类推
+
+5. 原版OpenLog无法支持高数据率保存数据，如果希望使用高数据率的黑匣子，建议使用#link("https://humpbacklab.com/humplog.html")[HumpLog]。
 
 = 详细技术规范 <specs>
 

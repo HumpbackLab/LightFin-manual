@@ -147,6 +147,7 @@
   update-date: "2026年1月28日",
   hardware-info: "适用硬件：LightFin 飞控",
   show-product-image: true,
+  product-image-path: "assets/product-overview.aggressive-plus.jpg",
 ) = {
   align(center + horizon)[
     #block(inset: 3em)[
@@ -160,7 +161,7 @@
     ]
 
     #if show-product-image [
-      #placeholder("产品外观与接口示意图", img_path: "assets/product-overview.aggressive-plus.jpg", height: 15em)
+      #placeholder("产品外观与接口示意图", img_path: product-image-path, height: 15em)
     ]
 
     #v(1fr)
